@@ -42,7 +42,7 @@ public class Student {
     }
 
     public Student(String email, String fname, String lname, String perm) {
-        this.email = email;
+        this.setEmail(email);
         this.fname = fname;
         this.lname = lname;
         this.perm = perm;
