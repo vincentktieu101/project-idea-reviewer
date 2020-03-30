@@ -14,6 +14,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import edu.ucsb.cs48.s20.demo.repositories.AdminRepository;
+import edu.ucsb.cs48.s20.demo.repositories.StudentRepository;
 
 /**
  * Service object that wraps the UCSB Academic Curriculum API
@@ -38,6 +39,9 @@ public class GoogleMembershipService implements MembershipService {
     @Autowired
     private AdminRepository adminRepository;
 
+    @Autowired
+    private StudentRepository studentRepository;
+
     /**
      * @param token OAuth token
      * @return true if current logged-in user is a member but not an admin
@@ -53,6 +57,15 @@ public class GoogleMembershipService implements MembershipService {
 
     public boolean isAdmin(OAuth2AuthenticationToken token) {
         return hasRole(token, "admin");
+    }
+
+    /**
+     * @param token OAuth token
+     * @return true if current logged-in user is an Admin
+     */
+
+    public boolean isStudent(OAuth2AuthenticationToken token) {
+        return hasRole(token, "student");
     }
 
     /**
@@ -88,6 +101,10 @@ public class GoogleMembershipService implements MembershipService {
             return true;
         }
 
+        if (roleToTest.equals("student") && isStudentEmail(email)) {
+            return true;
+        }
+
         if (roleToTest.equals("member") && memberHostedDomain.equals(hostedDomain)) {
             return true;
         }
@@ -97,6 +114,10 @@ public class GoogleMembershipService implements MembershipService {
 
     private boolean isAdminEmail(String email) {
         return !adminRepository.findByEmail(email).isEmpty() || (adminEmails.contains(email));
+    }
+
+    private boolean isStudentEmail(String email) {
+        return !studentRepository.findByEmail(email).isEmpty();
     }
 
     public List<String> getAdminEmails() {
