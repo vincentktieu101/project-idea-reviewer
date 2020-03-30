@@ -9,6 +9,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotBlank;
 
 @Entity
@@ -37,6 +39,9 @@ public class Student {
     @NotBlank
     private String perm;
 
+    @OneToOne
+    @JoinColumn(name = "project_idea_id")
+    private ProjectIdea projectIdea;
 
     public Student() {
     }
@@ -104,6 +109,7 @@ public class Student {
         return Objects.hash(id, email, fname, lname, perm);
     }
 
+
     @Override
     public String toString() {
         return "{" +
@@ -112,8 +118,34 @@ public class Student {
             ", fname='" + getFname() + "'" +
             ", lname='" + getLname() + "'" +
             ", perm='" + getPerm() + "'" +
+            ", projectIdea='" + getProjectIdea().getTitle() + "'" +
             "}";
     }
+    
+
+    public ProjectIdea getProjectIdea() {
+        return this.projectIdea;
+    }
+
+    public void setProjectIdea(ProjectIdea projectIdea) {
+        this.projectIdea = projectIdea;
+    }
+
+    public String title() {
+        if (projectIdea==null) 
+          return "";
+        if (projectIdea.getTitle()==null)
+          return "";
+        return projectIdea.getTitle();
+    }
    
+    public String details() {
+        if (projectIdea==null) 
+          return "";
+        if (projectIdea.getDetails()==null)
+          return "";
+        return projectIdea.getDetails();
+    }
+
 
 }
