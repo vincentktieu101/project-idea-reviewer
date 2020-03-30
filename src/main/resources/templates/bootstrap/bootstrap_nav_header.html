@@ -15,6 +15,11 @@
             </li>
 
             <li th:if="${isAdmin}" class="nav-item ">
+                <a class="nav-link" href="/reviews" id="navbarDropdown" role="button">
+                    Reviews
+                </a>
+            </li>
+            <li th:if="${isAdmin}" class="nav-item ">
                 <a class="nav-link" href="/students" id="navbarDropdown" role="button">
                     Students
                 </a>
