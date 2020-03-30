@@ -29,7 +29,6 @@ public class ProjectIdea {
     private String title;
 
     @NotBlank
-    @Lob
     private String details;
 
     public long getId() {
