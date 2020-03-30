@@ -57,12 +57,11 @@ public class Student {
     }
 
     public String getEmail() {
-        return this.email.replaceFirst("@umail.ucsb.edu", "@ucsb.edu");
+        return this.email;
     }
 
     public void setEmail(String email) {
-        
-        this.email = email;
+        this.email = email.replaceFirst("@umail.ucsb.edu", "@ucsb.edu");
     }
 
     public String getFname() {
