@@ -9,13 +9,7 @@ import edu.ucsb.cs48.s20.demo.repositories.StudentRepository;
 import edu.ucsb.cs48.s20.demo.services.CSVToObjectService;
 import edu.ucsb.cs48.s20.demo.services.MembershipService;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.util.List;
 import java.util.Optional;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,8 +22,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -102,7 +94,7 @@ public class ProjectIdeaController {
             return "redirect:/";
         }
 
-        boolean errors =false;
+        boolean errors = false;
 
         model.addAttribute("titleHasErrors", false);
         model.addAttribute("detailHasErrors", false);
@@ -125,6 +117,11 @@ public class ProjectIdeaController {
             model.addAttribute("detailErrors", "Please add some more detail (at least 30 chars)");
             model.addAttribute("detailHasErrors", true);
             errors = true;
+        } else if (idea.getDetails().length() > 255) {
+            model.addAttribute("detailErrors", "Description was too long; please limit it to 255 characters (currently "
+                    + idea.getDetails().length() + " characters)");
+            model.addAttribute("detailHasErrors", true);
+            errors = true;
         }
 
         if (!errors) {
@@ -141,12 +138,12 @@ public class ProjectIdeaController {
         }
 
         model.addAttribute("idea", idea);
-    
+
         logger.info("leaving ProjectIdeaController addIdea:");
-        logger.info("idea"+idea);
+        logger.info("idea" + idea);
 
         return "index";
-        
+
     }
 
 }
