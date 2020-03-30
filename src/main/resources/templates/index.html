@@ -12,12 +12,29 @@
 
     <h1>Welcome to the Project Idea Reviewer</h1>
 
-    <div th:if="${isStudent}">
-      <p>It looks like you are a student in the class.</p>      
+    <div th:if="${needsToSubmitProjectIdea}">
+      <p>To get started, submit your project idea below.</p>
+      <p>After you submit your project idea, you can rate other students project ideas as they become available for
+        rating.</p>
+      <div th:replace="ideas/fragments/form.html"></div>
     </div>
 
-    <div th:if="${needsToSubmitProjectIdea}">
-      <p>It looks like you haven't submitted a project idea yet.</p>      
+    <div th:if="${isStudent}">
+      <div th:unless="${needsToSubmitProjectIdea}">
+        <p>Your project idea</p>
+        <table>
+          <tbody>
+            <tr>
+              <th>Title</th>
+              <td th:text="${student.title()}"></td>
+            </tr>
+            <tr>
+              <th>Details</th>
+              <td th:text="${student.details()}"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <div th:replace="bootstrap/bootstrap_footer.html"></div>

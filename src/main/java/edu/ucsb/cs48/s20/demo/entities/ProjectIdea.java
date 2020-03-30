@@ -27,7 +27,7 @@ public class ProjectIdea {
     private String title;
 
     @NotBlank
-    private String text;
+    private String details;
 
     public long getId() {
         return this.id;
@@ -53,14 +53,16 @@ public class ProjectIdea {
         this.title = title;
     }
 
-    public String getText() {
-        return this.text;
+   
+
+    public String getDetails() {
+        return this.details;
     }
 
-    public void setText(String text) {
-        this.text = text;
+    public void setDetails(String details) {
+        this.details = details;
     }
-    
+
 
     @Override
     public boolean equals(Object o) {
@@ -70,13 +72,14 @@ public class ProjectIdea {
             return false;
         }
         ProjectIdea projectIdea = (ProjectIdea) o;
-        return id == projectIdea.id && Objects.equals(student, projectIdea.student) && Objects.equals(title, projectIdea.title) && Objects.equals(text, projectIdea.text);
+        return id == projectIdea.id && Objects.equals(student, projectIdea.student) && Objects.equals(title, projectIdea.title) && Objects.equals(details, projectIdea.details);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, student, title, text);
+        return Objects.hash(id, student, title, details);
     }
+    
 
     @Override
     public String toString() {
@@ -84,8 +87,9 @@ public class ProjectIdea {
             " id='" + getId() + "'" +
             ", student='" + getStudent() + "'" +
             ", title='" + getTitle() + "'" +
-            ", text='" + getText() + "'" +
+            ", details='" + getDetails() + "'" +
             "}";
     }
+
 
 }

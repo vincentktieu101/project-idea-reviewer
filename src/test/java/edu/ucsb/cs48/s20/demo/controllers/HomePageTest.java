@@ -14,6 +14,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import edu.ucsb.cs48.s20.demo.advice.AuthControllerAdvice;
+import edu.ucsb.cs48.s20.demo.advice.StudentFlowAdvice;
+import edu.ucsb.cs48.s20.demo.repositories.AppUserRepository;
+import edu.ucsb.cs48.s20.demo.repositories.StudentRepository;
+import edu.ucsb.cs48.s20.demo.services.MembershipService;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
@@ -33,6 +37,19 @@ public class HomePageTest {
 	
 	@MockBean
     private ClientRegistrationRepository crr;
+
+    @MockBean
+    private MembershipService ms;
+
+    @MockBean
+    private AppUserRepository aur;
+
+    @MockBean
+    private StudentRepository sr;
+
+    @MockBean
+    private StudentFlowAdvice studentFlowAdvice;
+
 
     @Test
     public void getHomePage_ContentType() throws Exception {

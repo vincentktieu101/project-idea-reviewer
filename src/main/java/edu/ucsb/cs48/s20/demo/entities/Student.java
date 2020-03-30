@@ -47,7 +47,7 @@ public class Student {
     }
 
     public Student(String email, String fname, String lname, String perm) {
-        this.email = email;
+        this.setEmail(email);
         this.fname = fname;
         this.lname = lname;
         this.perm = perm;
@@ -130,7 +130,22 @@ public class Student {
     public void setProjectIdea(ProjectIdea projectIdea) {
         this.projectIdea = projectIdea;
     }
+
+    public String title() {
+        if (projectIdea==null) 
+          return "";
+        if (projectIdea.getTitle()==null)
+          return "";
+        return projectIdea.getTitle();
+    }
    
+    public String details() {
+        if (projectIdea==null) 
+          return "";
+        if (projectIdea.getDetails()==null)
+          return "";
+        return projectIdea.getDetails();
+    }
 
 
 }

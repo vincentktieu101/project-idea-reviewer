@@ -1,6 +1,9 @@
 package edu.ucsb.cs48.s20.demo.controllers;
 
 import org.springframework.web.bind.annotation.GetMapping;
+
+import edu.ucsb.cs48.s20.demo.entities.ProjectIdea;
+
 import org.springframework.stereotype.Controller;
 
 import java.util.HashMap;
@@ -20,6 +23,8 @@ public class ApplicationController{
 
     @GetMapping("/")
     public String home(Model model){
+        ProjectIdea projectIdea = new ProjectIdea();
+        model.addAttribute("idea",projectIdea);
         return "index";
     }
 

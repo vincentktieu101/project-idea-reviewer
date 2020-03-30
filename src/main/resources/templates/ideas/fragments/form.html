@@ -1,0 +1,18 @@
+<form action="#" th:action="@{/idea/add}" th:object="${idea}" method="post">
+    <input type="text" class="form-control" th:field="*{id}" hidden />
+
+    <div class="form-group">
+        <label>Title</label>
+        <input type="text" class="form-control" th:field="*{title}" placeholder="My great app idea" />
+        <div th:errors="*{title}">title errors</div>
+    </div>
+
+    <div class="form-group">
+        <label >Details</label>
+        <textarea  th:field="*{details}" rows="4" cols="50">
+        </textarea>
+        <div th:errors="*{details}">detail errors</div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
