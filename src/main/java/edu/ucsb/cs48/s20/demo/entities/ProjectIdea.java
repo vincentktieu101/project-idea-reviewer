@@ -5,6 +5,7 @@ import com.opencsv.bean.CsvBindByPosition;
 
 import java.util.Objects;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -27,6 +28,7 @@ public class ProjectIdea {
     private String title;
 
     @NotBlank
+    @Column(columnDefinition = "LONGTEXT")
     private String details;
 
     public long getId() {

@@ -3,6 +3,7 @@ package edu.ucsb.cs48.s20.demo.controllers;
 import edu.ucsb.cs48.s20.demo.advice.StudentFlowAdvice;
 import edu.ucsb.cs48.s20.demo.entities.ProjectIdea;
 import edu.ucsb.cs48.s20.demo.entities.Student;
+import edu.ucsb.cs48.s20.demo.formbeans.Idea;
 import edu.ucsb.cs48.s20.demo.repositories.ProjectIdeaRepository;
 import edu.ucsb.cs48.s20.demo.repositories.StudentRepository;
 import edu.ucsb.cs48.s20.demo.services.CSVToObjectService;
@@ -38,7 +39,6 @@ public class ProjectIdeaController {
 
     @Autowired
     private MembershipService ms;
-
 
     @Autowired
     private StudentFlowAdvice studentFlowAdvice;
@@ -82,32 +82,71 @@ public class ProjectIdeaController {
         } else {
             ProjectIdea idea = optionalIdea.get();
             String title = idea.getTitle();
+            Student student = idea.getStudent();
             String name = idea.getStudent().getFname() + " " + idea.getStudent().getLname();
             projectIdeaRepository.delete(idea);
+            studentRepository.save(student);
             redirAttrs.addFlashAttribute("alertSuccess",
-                    "Idea " + title + " for studnet " + name + " successfully deleted.");
+                    "Idea " + title + " for student " + name + " successfully deleted.");
         }
         model.addAttribute("ideas", projectIdeaRepository.findAll());
         return "redirect:/ideas";
     }
 
-    @PostMapping("/idea/add")
-    public String addIdea(@ModelAttribute("idea") ProjectIdea idea, Model model, OAuth2AuthenticationToken token,
+    @PostMapping("/ideas/add")
+    public String addIdea(@ModelAttribute("idea") Idea idea, Model model, OAuth2AuthenticationToken token,
             BindingResult bindingResult, RedirectAttributes redirAttrs) {
         String role = ms.role(token);
         if (!role.equals("Admin") && !role.equals("Student")) {
             redirAttrs.addFlashAttribute("alertDanger", "You do not have permission to access that page");
             return "redirect:/";
         }
-        if (!bindingResult.hasErrors()) {
-            Student student = studentFlowAdvice.getStudent(token);
-            idea.setStudent(student);
-            student.setProjectIdea(idea);
-            projectIdeaRepository.save(idea);
-            studentRepository.save(student);
+
+        boolean errors =false;
+
+        model.addAttribute("titleHasErrors", false);
+        model.addAttribute("detailHasErrors", false);
+
+        if (idea.getTitle() == null || idea.getTitle().length() < 15) {
+            model.addAttribute("titleErrors", "Title is too short (15 characters minimum)");
+            model.addAttribute("titleHasErrors", true);
+            errors = true;
+
         }
 
-        return "redirect:/";
+        if (idea.getTitle() != null && idea.getTitle().length() > 255) {
+            model.addAttribute("titleErrors", "Title is too long");
+            model.addAttribute("titleHasErrors", true);
+            errors = true;
+
+        }
+
+        if (idea.getDetails() == null || idea.getDetails().length() < 200) {
+            model.addAttribute("detailErrors", "Please add some more detail");
+            model.addAttribute("detailHasErrors", true);
+            errors = true;
+        }
+
+        if (!errors) {
+            Student student = studentFlowAdvice.getStudent(token);
+            ProjectIdea projectIdea = new ProjectIdea();
+            projectIdea.setStudent(student);
+            student.setProjectIdea(projectIdea);
+            projectIdea.setTitle(idea.getTitle());
+            projectIdea.setDetails(idea.getDetails());
+            projectIdeaRepository.save(projectIdea);
+            studentRepository.save(student);
+            return "redirect:/";
+
+        }
+
+        model.addAttribute("idea", idea);
+    
+        logger.info("leaving ProjectIdeaController addIdea:");
+        logger.info("idea"+idea);
+
+        return "index";
+        
     }
 
 }
