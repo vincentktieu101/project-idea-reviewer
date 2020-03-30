@@ -10,7 +10,15 @@
   <div class="container">
     <div th:replace="bootstrap/bootstrap_nav_header.html"></div>
 
-      <p>This is the home page placeholder.</p>
+    <h1>Welcome to the Project Idea Reviewer</h1>
+
+    <div th:if="${isStudent}">
+      <p>It looks like you are a student in the class.</p>      
+    </div>
+
+    <div th:if="${needsToSubmitProjectIdea}">
+      <p>It looks like you haven't submitted a project idea yet.</p>      
+    </div>
 
     <div th:replace="bootstrap/bootstrap_footer.html"></div>
   </div>
