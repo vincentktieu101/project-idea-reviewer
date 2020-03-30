@@ -1,5 +1,8 @@
 package edu.ucsb.cs48.s20.demo.entities;
 
+import com.opencsv.bean.CsvBindByName;
+import com.opencsv.bean.CsvBindByPosition;
+
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -14,15 +17,23 @@ public class Student {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @CsvBindByPosition(position = 10)
+    @CsvBindByName
     @NotBlank
     private String email;
 
+    @CsvBindByPosition(position = 5)
+    @CsvBindByName
     @NotBlank
     private String fname;
 
+    @CsvBindByPosition(position = 4)
+    @CsvBindByName
     @NotBlank
     private String lname;
 
+    @CsvBindByPosition(position = 1)
+    @CsvBindByName
     @NotBlank
     private String perm;
 
@@ -46,10 +57,11 @@ public class Student {
     }
 
     public String getEmail() {
-        return this.email;
+        return this.email.replaceFirst("@umail.ucsb.edu", "@ucsb.edu");
     }
 
     public void setEmail(String email) {
+        
         this.email = email;
     }
 
