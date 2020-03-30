@@ -102,7 +102,7 @@ public class ProjectIdeaController {
             return "redirect:/";
         }
 
-        boolean errors =false;
+        boolean errors = false;
 
         model.addAttribute("titleHasErrors", false);
         model.addAttribute("detailHasErrors", false);
@@ -125,6 +125,11 @@ public class ProjectIdeaController {
             model.addAttribute("detailErrors", "Please add some more detail (at least 30 chars)");
             model.addAttribute("detailHasErrors", true);
             errors = true;
+        } else if (idea.getDetails().length() > 255) {
+            model.addAttribute("detailErrors", "Description was too long; please limit it to 255 characters (currently "
+                    + idea.getDetails().length() + " characters)");
+            model.addAttribute("detailHasErrors", true);
+            errors = true;
         }
 
         if (!errors) {
@@ -141,12 +146,12 @@ public class ProjectIdeaController {
         }
 
         model.addAttribute("idea", idea);
-    
+
         logger.info("leaving ProjectIdeaController addIdea:");
-        logger.info("idea"+idea);
+        logger.info("idea" + idea);
 
         return "index";
-        
+
     }
 
 }
