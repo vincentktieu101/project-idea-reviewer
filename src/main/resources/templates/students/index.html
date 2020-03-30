@@ -8,6 +8,7 @@
 <div class="container">
   <div th:replace="bootstrap/bootstrap_nav_header.html"></div>
 
+
   <h3>Students</h3>
   <table class="table">
     <thead>
@@ -36,6 +37,16 @@
     </tr>
     </tbody>
   </table>
+
+<h3>Upload Students</h3>
+
+<br/>
+<form action="/students/upload" method="post" enctype="multipart/form-data">
+  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
+  <input type="file" name="csv" id="csv" accept="text/csv">
+  <input type="submit" class="btn btn-secondary" value="Submit CSV">
+</form>
+<br>
 
   <div th:replace="bootstrap/bootstrap_footer.html"></div>
 </div>
