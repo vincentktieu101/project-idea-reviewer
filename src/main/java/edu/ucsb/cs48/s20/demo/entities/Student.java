@@ -42,7 +42,7 @@ public class Student {
     }
 
     public Student(String email, String fname, String lname, String perm) {
-        this.email = email;
+        this.setEmail(email);
         this.fname = fname;
         this.lname = lname;
         this.perm = perm;
@@ -57,12 +57,11 @@ public class Student {
     }
 
     public String getEmail() {
-        return this.email.replaceFirst("@umail.ucsb.edu", "@ucsb.edu");
+        return this.email;
     }
 
     public void setEmail(String email) {
-        
-        this.email = email;
+        this.email = email.replaceFirst("@umail.ucsb.edu", "@ucsb.edu");
     }
 
     public String getFname() {
