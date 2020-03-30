@@ -1,9 +1,5 @@
 package edu.ucsb.cs48.s20.demo.entities;
 
-import com.opencsv.bean.CsvBindByName;
-import com.opencsv.bean.CsvBindByPosition;
-
-import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Entity;
@@ -11,7 +7,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotBlank;
 
