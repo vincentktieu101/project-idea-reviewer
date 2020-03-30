@@ -147,5 +147,8 @@ public class Student {
         return projectIdea.getDetails();
     }
 
+    public int numReviewsEntered() {
+        return 0;
+    }
 
 }

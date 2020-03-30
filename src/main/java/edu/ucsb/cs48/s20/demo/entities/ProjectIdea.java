@@ -3,6 +3,7 @@ package edu.ucsb.cs48.s20.demo.entities;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvBindByPosition;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.Column;

@@ -9,30 +9,34 @@
   <div th:replace="bootstrap/bootstrap_nav_header.html"></div>
 
 
-  <h3>Ideas</h3>
+  <h3>Reviews</h3>
   <table class="bootstrap-table" data-toggle="table" data-search="true" data-show-export="true" data-show-columns="true"
   data-show-columns-toggle-all="true">
     <thead>
     <tr>
       <th data-sortable="true">id</th>
-      <th data-sortable="true">title</th>
-      <th data-sortable="true">details</th>
-      <th data-sortable="true">first</th>
-      <th data-sortable="true">last</th>
-      <th data-sortable="true">email</th>
+      <th data-sortable="true">idea id</th>
+      <th data-sortable="true">idea title</th>
+      <th data-sortable="true">rating</th>
+      <th data-sortable="true">review details</th>
+      <th data-sortable="true">reviewer fname</th>
+      <th data-sortable="true">reviewer lname</th>
+      <th data-sortable="true">reviewer email</th>
       <th>remove</th>
     </tr>
     </thead>
     <tbody>
-    <tr th:each="i: ${ideas}">
-      <td th:text="${i.id}"></td>
-      <td th:text="${i.title}"></td>
-      <td th:text="${i.details}"></td>
-      <td th:text="${i.student.fname}"></td>
-      <td th:text="${i.student.lname}"></td>
-      <td th:text="${i.student.email}"></td>
+    <tr th:each="r: ${reviews}">
+      <td th:text="${r.id}"></td>
+      <td th:text="${r.idea.id}"></td>
+      <td th:text="${r.idea.title}"></td>
+      <td th:text="${r.rating}"></td>
+      <td th:text="${r.details}"></td>
+      <td th:text="${r.reviewer.fname}"></td>
+      <td th:text="${r.reviewer.lname}"></td>
+      <td th:text="${r.reviewer.email}"></td>
       <td>
-        <form th:action="@{/ideas/delete/{id}(id=${i.id})}" th:method="post">
+        <form th:action="@{/reviews/delete/{id}(id=${i.id})}" th:method="post">
           <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
           <button type="submit" class="btn btn-danger">Delete</button>
         </form>

@@ -10,15 +10,17 @@
 
 
   <h3>Students</h3>
-  <table class="table">
+  <table class="bootstrap-table" data-toggle="table" data-search="true" data-show-export="true" data-show-columns="true"
+  data-show-columns-toggle-all="true">
     <thead>
     <tr>
-      <th>id</th>
-      <th>first</th>
-      <th>last</th>
-      <th>perm</th>
-      <th>email</th>
-      <th>idea</th>
+      <th data-sortable="true">id</th>
+      <th data-sortable="true" >first</th>
+      <th data-sortable="true">last</th>
+      <th data-sortable="true">perm</th>
+      <th data-sortable="true">email</th>
+      <th data-sortable="true">idea</th>
+      <th data-sortable="true">reviews entered</th>
       <th>remove</th>
     </tr>
     </thead>
@@ -30,6 +32,7 @@
       <td th:text="${u.perm}"></td>
       <td th:text="${u.email}"></td>
       <td th:text="${u.title()}"></td>
+      <td th:text="${u.numReviewsEntered()}"></td>
       <td>
         <form th:action="@{/students/delete/{id}(id=${u.id})}" th:method="post">
           <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
