@@ -1,0 +1,44 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <div th:replace="bootstrap/title.html"></div>
+  <div th:replace="bootstrap/bootstrap_head.html"></div>
+</head>
+<body>
+<div class="container">
+  <div th:replace="bootstrap/bootstrap_nav_header.html"></div>
+
+  <h3>Students</h3>
+  <table class="table">
+    <thead>
+    <tr>
+      <th>id</th>
+      <th>first</th>
+      <th>last</th>
+      <th>perm</th>
+      <th>email</th>
+      <th>remove</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="u: ${students}">
+      <td th:text="${u.id}"></td>
+      <td th:text="${u.fname}"></td>
+      <td th:text="${u.lname}"></td>
+      <td th:text="${u.perm}"></td>
+      <td th:text="${u.email}"></td>
+      <td>
+        <form th:action="@{/students/delete/{id}(id=${u.id})}" th:method="post">
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </td>
+    </tr>
+    </tbody>
+  </table>
+
+  <div th:replace="bootstrap/bootstrap_footer.html"></div>
+</div>
+<div th:replace="bootstrap/bootstrap_scripts.html"></div>
+</body>
+</html>
