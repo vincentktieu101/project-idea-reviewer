@@ -22,6 +22,13 @@ public interface MembershipService {
 
     /**
      * @param token OAuth token
+     * @return true if current logged-in user is a Student
+     */
+
+    public boolean isStudent(OAuth2AuthenticationToken token);
+
+    /**
+     * @param token OAuth token
      * @return true if current logged-in user is an Admin or a Member
      */
 
@@ -34,6 +41,8 @@ public interface MembershipService {
             return "Guest";
         if (isAdmin(token))
             return "Admin";
+        if (isStudent(token))
+            return "Student";    
         if (isMember(token))
             return "Member";
         return "Guest";
