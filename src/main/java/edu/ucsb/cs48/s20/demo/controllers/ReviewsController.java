@@ -145,11 +145,7 @@ public class ReviewsController {
             review.setRating(Integer.parseInt(reviewBean.getRating()));
             review.setDetails(reviewBean.getDetails());
             reviewRepository.save(review);
-            if (studentFlowAdvice.getReviewsNeeded(token) < 1) {
-                return "redirect:/";
-            } else {
-                return "redirect:/reviews/perform";
-            }
+            return "redirect:/reviews/perform";
 
         }
 

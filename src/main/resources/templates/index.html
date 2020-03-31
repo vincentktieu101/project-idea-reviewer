@@ -34,13 +34,16 @@
               >
             </div>
           </div>
-          <div th:unless="${reviewsNeededFromStudent} > 0">
-            <div class="alert alert-success" role="alert">
-              <span
-                ><strong>All done!</strong> You have reviewed a sufficient
-                number of project ideas.</span
-              >
-            </div>
+        </div>
+        <div th:unless="${reviewsNeededFromStudent} > 0">
+          <div class="alert alert-success" role="alert">
+            <span
+              ><strong>All done!</strong> You have reviewed a sufficient number
+              of project ideas.
+              <a href="reviews/perform"
+                >Click here to review another project idea</a
+              ></span
+            >
           </div>
 
           <br />
