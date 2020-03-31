@@ -87,9 +87,10 @@ public class StudentFlowAdvice {
 		Stream<ProjectIdea> projects = StreamSupport.stream(projectIdeaRepository.findAll().spliterator(), false)
 				.filter((idea) -> {
 					List<Review> reviews = reviewRepository.findByIdea(idea);
-					if (idea.getStudent().equals(student)) {
+					if (idea.getStudent().equals(student))
 						return false;
-					}
+					if (reviews.stream().anyMatch((review) -> review.getReviewer().equals(student)))
+						return false;
 					return reviews.size() < NUMBER_OF_REVIEWS_REQUIRED;
 				});
 
