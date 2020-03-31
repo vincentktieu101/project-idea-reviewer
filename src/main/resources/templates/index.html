@@ -24,6 +24,18 @@
     <div th:if="${isStudent}">
         <div th:unless="${needsToSubmitProjectIdea}">
             <!-- Top banners so user knows if they need to submit more reviews OR if they are done w/ the assignment -->
+            <div th:unless="${reviewsNeededFromStudent} > 0">
+                <div class="alert alert-success" role="alert">
+            <span
+            ><strong>All done!</strong> You have reviewed a sufficient number
+              of project ideas.
+              <a href="reviews/perform"
+              >Click here to review another project idea</a
+              ></span
+            >
+                </div>
+                <br/>
+            </div>
             <div th:if="${reviewsNeededFromStudent} > 0">
                 <div class="alert alert-warning" role="alert">
               <span
@@ -64,18 +76,6 @@
               </tbody>
             </table>
           </div>
-        </div>
-        <div th:unless="${reviewsNeededFromStudent} > 0">
-            <div class="alert alert-success" role="alert">
-            <span
-            ><strong>All done!</strong> You have reviewed a sufficient number
-              of project ideas.
-              <a href="reviews/perform"
-              >Click here to review another project idea</a
-              ></span
-            >
-            </div>
-            <br/>
         </div>
 
     </div>
