@@ -4,14 +4,20 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 
 import edu.ucsb.cs48.s20.demo.controllers.AppUsersController;
 import edu.ucsb.cs48.s20.demo.entities.AppUser;
+import edu.ucsb.cs48.s20.demo.entities.ProjectIdea;
 import edu.ucsb.cs48.s20.demo.entities.Review;
 import edu.ucsb.cs48.s20.demo.entities.Student;
 import edu.ucsb.cs48.s20.demo.repositories.AppUserRepository;
+import edu.ucsb.cs48.s20.demo.repositories.ProjectIdeaRepository;
 import edu.ucsb.cs48.s20.demo.repositories.ReviewRepository;
 import edu.ucsb.cs48.s20.demo.repositories.StudentRepository;
 import edu.ucsb.cs48.s20.demo.services.MembershipService;
 
 import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
@@ -20,52 +26,80 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 @ControllerAdvice
 public class StudentFlowAdvice {
 
-    private final int NUMBER_OF_REVIEWS_REQUIRED = 5;
+	private final int NUMBER_OF_REVIEWS_REQUIRED = 1;
 
-    @Autowired
-    private MembershipService membershipService;
+	@Autowired
+	private MembershipService membershipService;
 
-    @Autowired
-    private AppUserRepository appUserRepository;
+	@Autowired
+	private AppUserRepository appUserRepository;
 
-    @Autowired
-    private StudentRepository studentRepository;
+	@Autowired
+	private StudentRepository studentRepository;
 
-    @Autowired
-    private ReviewRepository reviewRepository;
+	@Autowired
+	private ProjectIdeaRepository projectIdeaRepository;
 
-    @ModelAttribute("needsToSubmitProjectIdea")
-    public boolean needsToSubmitProjectIdea(OAuth2AuthenticationToken token) {
-        Student student = getStudent(token);
-        if (student == null)
-            return false;
-        return (student.getProjectIdea() == null);
-    }
+	@Autowired
+	private ReviewRepository reviewRepository;
 
-    @ModelAttribute("student")
-    public Student getStudent(OAuth2AuthenticationToken token) {
-        if (!(membershipService.isStudent(token))) {
-            return null;
-        }
-        String email = membershipService.email(token);
-        List<Student> students = studentRepository.findByEmail(email);
-        if (students.size() == 0) {
-            return null;
-        }
-        Student student = students.get(0);
-        return student;
-    }
+	@ModelAttribute("needsToSubmitProjectIdea")
+	public boolean needsToSubmitProjectIdea(OAuth2AuthenticationToken token) {
+		Student student = getStudent(token);
+		if (student == null)
+			return false;
+		return (student.getProjectIdea() == null);
+	}
 
-    @ModelAttribute("reviewsNeededFromStudent")
-    public int getReviewsNeeded(OAuth2AuthenticationToken token) {
-        Student student = getStudent(token);
-        if (student == null) {
-            return 0;
-        }
+	@ModelAttribute("student")
+	public Student getStudent(OAuth2AuthenticationToken token) {
+		if (!(membershipService.isStudent(token))) {
+			return null;
+		}
+		String email = membershipService.email(token);
+		List<Student> students = studentRepository.findByEmail(email);
+		if (students.size() == 0) {
+			return null;
+		}
+		Student student = students.get(0);
+		return student;
+	}
 
-        List<Review> reviews = reviewRepository.findByReviewer(student);
+	@ModelAttribute("reviewsNeededFromStudent")
+	public int getReviewsNeeded(OAuth2AuthenticationToken token) {
+		Student student = getStudent(token);
+		if (student == null) {
+			return 0;
+		}
 
-        return Integer.max(0, NUMBER_OF_REVIEWS_REQUIRED - reviews.size());
-    }
+		List<Review> reviews = reviewRepository.findByReviewer(student);
+
+		return Integer.max(0, NUMBER_OF_REVIEWS_REQUIRED - reviews.size());
+	}
+
+	@ModelAttribute("randomIdeaThatNeedsAReview")
+	public ProjectIdea getRandomIdeaThatNeedsAReview(OAuth2AuthenticationToken token) {
+		Student student = getStudent(token);
+		if (student == null) {
+			return null;
+		}
+
+		Stream<ProjectIdea> projects = StreamSupport.stream(projectIdeaRepository.findAll().spliterator(), false)
+				.filter((idea) -> {
+					List<Review> reviews = reviewRepository.findByIdea(idea);
+					if (idea.getStudent().equals(student)) {
+						return false;
+					}
+					return reviews.size() < NUMBER_OF_REVIEWS_REQUIRED;
+				});
+
+		List<ProjectIdea> remainingProjects = projects.collect(Collectors.toList());
+
+		if (remainingProjects.isEmpty()) {
+			return null;
+		}
+		return remainingProjects.get(new Random().nextInt(remainingProjects.size()));
+
+	}
 
 }

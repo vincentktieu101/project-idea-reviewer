@@ -9,7 +9,16 @@
       <div th:replace="bootstrap/bootstrap_nav_header.html"></div>
 
       <h3>Giving some reviews</h3>
-      <span th:text="${reviewsNeededFromStudent}"></span>
+      <span th:text="${reviewsNeededFromStudent} + ' reviews remaining'"></span>
+      <br />
+      <div th:if="${randomIdeaThatNeedsAReview}">
+        <span
+          th:text="${randomIdeaThatNeedsAReview.title} + ' needs a review'"
+        ></span>
+      </div>
+      <div th:unless="${randomIdeaThatNeedsAReview}">
+        <span>No ideas currently need a review; please check back later.</span>
+      </div>
 
       <div th:replace="bootstrap/bootstrap_footer.html"></div>
     </div>
