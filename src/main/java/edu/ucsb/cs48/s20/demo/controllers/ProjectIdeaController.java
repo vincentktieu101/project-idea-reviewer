@@ -3,13 +3,16 @@ package edu.ucsb.cs48.s20.demo.controllers;
 import edu.ucsb.cs48.s20.demo.advice.StudentFlowAdvice;
 import edu.ucsb.cs48.s20.demo.entities.ProjectIdea;
 import edu.ucsb.cs48.s20.demo.entities.Student;
+import edu.ucsb.cs48.s20.demo.entities.Review;
 import edu.ucsb.cs48.s20.demo.formbeans.Idea;
 import edu.ucsb.cs48.s20.demo.repositories.ProjectIdeaRepository;
 import edu.ucsb.cs48.s20.demo.repositories.StudentRepository;
+import edu.ucsb.cs48.s20.demo.repositories.ReviewRepository;
 import edu.ucsb.cs48.s20.demo.services.CSVToObjectService;
 import edu.ucsb.cs48.s20.demo.services.MembershipService;
 
 import java.util.Optional;
+import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -39,13 +42,17 @@ public class ProjectIdeaController {
 
 	private ProjectIdeaRepository projectIdeaRepository;
 
+	private ReviewRepository reviewRepository;
+
 	@Autowired
 	CSVToObjectService<Student> csvToObjectService;
 
 	@Autowired
-	public ProjectIdeaController(ProjectIdeaRepository projectIdeaRepository, StudentRepository studentRepository) {
+	public ProjectIdeaController(ProjectIdeaRepository projectIdeaRepository, StudentRepository studentRepository,
+			ReviewRepository reviewRepository) {
 		this.studentRepository = studentRepository;
 		this.projectIdeaRepository = projectIdeaRepository;
+		this.reviewRepository = reviewRepository;
 	}
 
 	@GetMapping("/ideas")
@@ -76,6 +83,13 @@ public class ProjectIdeaController {
 			String title = idea.getTitle();
 			Student student = idea.getStudent();
 			String name = idea.getStudent().getFname() + " " + idea.getStudent().getLname();
+
+			// Check if the project idea has any reviews. If it does, delete the reviews as well.
+			List<Review> reviews = reviewRepository.findByIdea(idea);
+			for(Review r : reviews) {
+				reviewRepository.delete(r);
+			}
+
 			projectIdeaRepository.delete(idea);
 			studentRepository.save(student);
 			redirAttrs.addFlashAttribute("alertSuccess",
