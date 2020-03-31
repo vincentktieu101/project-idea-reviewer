@@ -5,26 +5,26 @@
         <label>Title</label>
         <input type="text" class="form-control" th:field="*{title}" />
         <div th:if="${titleHasErrors}" class="alert alert-danger" role="alert" th:text="${titleErrors}"></div>
-        <p>Please give your project a short title. Minimum chars: <span th:text=${TITLE_CHAR_MIN}></span>, maximum chars: <span th:text=${TITLE_CHAR_MAX}></span>.  The best title is one that strikes the right balance 
+        <p>Please give your project a short title. Minimum chars: <span th:text=${TITLE_CHAR_MIN}></span>, maximum chars: <span th:text=${TITLE_CHAR_MAX}></span>.  The best title is one that strikes the right balance
             between conveying lots of information, while being as short as possible.  Take a moment
-            to try to strike the right balance before submitting. 
+            to try to strike the right balance before submitting.
         </p>
     </div>
 
     <div class="form-group">
         <label>Details</label>
-        <textarea class="form-control" th:field="*{details}" rows="4" cols="50">
+        <textarea class="form-control" th:field="*{details}" rows="4" cols="50" maxlength="255">
         </textarea>
 
         <div th:if="${detailHasErrors}" class="alert alert-danger" role="alert" th:text="${detailErrors}"></div>
-        <p>Please provide a <i>brief</i> description of your project idea.  
-            Minimum chars: <span th:text=${DETAILS_CHAR_MIN}></span>, maximum chars: <span th:text=${DETAILS_CHAR_MAX}></span>. 
+        <p>Please provide a <i>brief</i> description of your project idea.
+            Minimum chars: <span th:text=${DETAILS_CHAR_MIN}></span>, maximum chars: <span th:text=${DETAILS_CHAR_MAX}></span>.
         </p>
         <p>
-        Focus on what the app does for 
-            the <em>user</em> of the app, rather than on what you as the programmer will <em>build</em>. 
+        Focus on what the app does for
+            the <em>user</em> of the app, rather than on what you as the programmer will <em>build</em>.
         What is the need that this app addresses for the user, or the wish that it helps them fulfill?
-        </p>  
+        </p>
     </div>
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
     <button type="submit" class="btn btn-primary">Submit</button>

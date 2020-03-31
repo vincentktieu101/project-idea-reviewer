@@ -29,7 +29,7 @@
 
           <div class="form-group">
             <label>Details</label>
-            <textarea  class="form-control" th:field="*{details}" id="details" rows="4" cols="50">
+            <textarea  class="form-control" th:field="*{details}" id="details" rows="4" cols="50" maxlength="255">
         </textarea>
 
             <div th:if="${detailHasErrors}" class="alert alert-danger" role="alert" th:text="${detailErrors}"></div>
