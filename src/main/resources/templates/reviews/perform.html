@@ -33,7 +33,32 @@
 
           <div class="form-group">
             <label>Rating (enter an integer 1-5, 5 being an incredible idea)</label>
+            <!--
             <input type="text" id="rating-field" class="form-control" th:field="*{rating}" />
+            -->
+            <div class="form-group">
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="option1" name="option1" class="custom-control-input" value="1" th:field="*{rating}">
+                <label class="custom-control-label" for="option1">1</label>
+              </div>
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="option2" name="option2" class="custom-control-input" value="2" th:field="*{rating}">
+                <label class="custom-control-label" for="option2">2</label>
+              </div>
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="option3" name="option3" class="custom-control-input" value="3" th:field="*{rating}">
+                <label class="custom-control-label" for="option3">3</label>
+              </div>
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="option4" name="option4" class="custom-control-input" value="4" th:field="*{rating}">
+                <label class="custom-control-label" for="option4">4</label>
+              </div>
+              <div class="custom-control custom-radio custom-control-inline">
+                <input type="radio" id="option5" name="option5" class="custom-control-input" value="5" th:field="*{rating}">
+                <label class="custom-control-label" for="option5">5</label>
+              </div>
+            </div>
+
             <div th:if="${ratingHasErrors}" class="alert alert-danger" role="alert" th:text="${ratingErrors}"></div>
           </div>
 
@@ -66,12 +91,14 @@
     <!-- JS text field validation - if done server side, the user's in progress review will be deleted in event of an error ! -->
   <script>
     function validate() {
-      let rating = document.getElementById("rating-field").value;
+     // let rating = document.getElementById("rating-field").value;
       let details = document.getElementById("details").value;
+      /*
       if (!(rating >= 1 && rating <= 5)) {
         alert("Error: Rating must be an integer between 1-5 (inclusive)");
         return;
       }
+       */
       if (details.length < 20) {
         alert("Error: Please provide more details");
         return;
