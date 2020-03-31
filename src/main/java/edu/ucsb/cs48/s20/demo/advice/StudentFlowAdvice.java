@@ -20,13 +20,12 @@ import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 
 @ControllerAdvice
 public class StudentFlowAdvice {
-
-	private final int NUMBER_OF_REVIEWS_REQUIRED = 2;
 
 	@Autowired
 	private MembershipService membershipService;
@@ -43,23 +42,29 @@ public class StudentFlowAdvice {
 	@Autowired
 	private ReviewRepository reviewRepository;
 
+	@Value("${app.number_reviews_required}")
+	private int NUMBER_OF_REVIEWS_REQUIRED;
+
+	@Value("${app.show_student_reviews_of_their_idea}")
+	private boolean showStudentReviewsOfTheirIdea;
+
 	@ModelAttribute("TITLE_CHAR_MIN")
-	public int get_TITLE_CHAR_MIN(){
+	public int get_TITLE_CHAR_MIN() {
 		return ProjectIdea.TITLE_CHAR_MIN;
 	}
 
 	@ModelAttribute("TITLE_CHAR_MAX")
-	public int get_TITLE_CHAR_MAX(){
+	public int get_TITLE_CHAR_MAX() {
 		return ProjectIdea.TITLE_CHAR_MAX;
 	}
 
 	@ModelAttribute("DETAILS_CHAR_MIN")
-	public int get_DETAILS_CHAR_MIN(){
+	public int get_DETAILS_CHAR_MIN() {
 		return ProjectIdea.DETAILS_CHAR_MIN;
 	}
 
 	@ModelAttribute("DETAILS_CHAR_MAX")
-	public int get_DETAILS_CHAR_MAX(){
+	public int get_DETAILS_CHAR_MAX() {
 		return ProjectIdea.DETAILS_CHAR_MAX;
 	}
 
@@ -121,6 +126,11 @@ public class StudentFlowAdvice {
 		}
 		return remainingProjects.get(new Random().nextInt(remainingProjects.size()));
 
+	}
+
+	@ModelAttribute("showStudentReviewsOfTheirIdea")
+	public boolean showStudentReviewsOfTheirIdea() {
+		return showStudentReviewsOfTheirIdea;
 	}
 
 }
