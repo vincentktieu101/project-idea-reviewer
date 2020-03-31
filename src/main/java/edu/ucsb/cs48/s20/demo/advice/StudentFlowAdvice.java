@@ -43,6 +43,26 @@ public class StudentFlowAdvice {
 	@Autowired
 	private ReviewRepository reviewRepository;
 
+	@ModelAttribute("TITLE_CHAR_MIN")
+	public int get_TITLE_CHAR_MIN(){
+		return ProjectIdea.TITLE_CHAR_MIN;
+	}
+
+	@ModelAttribute("TITLE_CHAR_MAX")
+	public int get_TITLE_CHAR_MAX(){
+		return ProjectIdea.TITLE_CHAR_MAX;
+	}
+
+	@ModelAttribute("DETAILS_CHAR_MIN")
+	public int get_DETAILS_CHAR_MIN(){
+		return ProjectIdea.DETAILS_CHAR_MIN;
+	}
+
+	@ModelAttribute("DETAILS_CHAR_MAX")
+	public int get_DETAILS_CHAR_MAX(){
+		return ProjectIdea.DETAILS_CHAR_MAX;
+	}
+
 	@ModelAttribute("needsToSubmitProjectIdea")
 	public boolean needsToSubmitProjectIdea(OAuth2AuthenticationToken token) {
 		Student student = getStudent(token);
