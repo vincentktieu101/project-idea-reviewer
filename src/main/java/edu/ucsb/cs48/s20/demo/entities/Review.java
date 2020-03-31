@@ -2,13 +2,7 @@ package edu.ucsb.cs48.s20.demo.entities;
 
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 public class Review {
@@ -20,7 +14,7 @@ public class Review {
 	@JoinColumn(name = "student_id")
 	private Student reviewer;
 
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	@JoinColumn(name = "idea_id")
 	private ProjectIdea idea;
 
@@ -28,6 +22,12 @@ public class Review {
 
 	@Column(columnDefinition = "text")
 	private String details;
+
+	@PreRemove
+	private void preRemove() {
+		setIdea(null);
+		setReviewer(null);
+	}
 
 	public long getId() {
 		return this.id;
