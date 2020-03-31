@@ -1,6 +1,5 @@
 package edu.ucsb.cs48.s20.demo.entities;
 
-
 import java.util.Objects;
 
 import javax.persistence.Column;
@@ -13,92 +12,84 @@ import javax.persistence.OneToOne;
 
 @Entity
 public class Review {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
-   
-    @OneToOne
-    @JoinColumn(name = "student_id")
-    private Student reviewer;
-    
-    @OneToOne
-    @JoinColumn(name = "idea_id")
-    private ProjectIdea idea;
-    
-    private Integer rating;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-    @Column(columnDefinition = "LONGTEXT")
-    private String details;
+	@OneToOne
+	@JoinColumn(name = "student_id")
+	private Student reviewer;
 
+	@OneToOne
+	@JoinColumn(name = "idea_id")
+	private ProjectIdea idea;
 
-    public long getId() {
-        return this.id;
-    }
+	private Integer rating;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+	@Column(columnDefinition = "text")
+	private String details;
 
-    public Student getReviewer() {
-        return this.reviewer;
-    }
+	public long getId() {
+		return this.id;
+	}
 
-    public void setReviewer(Student reviewer) {
-        this.reviewer = reviewer;
-    }
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    public ProjectIdea getIdea() {
-        return this.idea;
-    }
+	public Student getReviewer() {
+		return this.reviewer;
+	}
 
-    public void setIdea(ProjectIdea idea) {
-        this.idea = idea;
-    }
+	public void setReviewer(Student reviewer) {
+		this.reviewer = reviewer;
+	}
 
-    public Integer getRating() {
-        return this.rating;
-    }
+	public ProjectIdea getIdea() {
+		return this.idea;
+	}
 
-    public void setRating(Integer rating) {
-        this.rating = rating;
-    }
+	public void setIdea(ProjectIdea idea) {
+		this.idea = idea;
+	}
 
-    public String getDetails() {
-        return this.details;
-    }
+	public Integer getRating() {
+		return this.rating;
+	}
 
-    public void setDetails(String details) {
-        this.details = details;
-    }
-    
+	public void setRating(Integer rating) {
+		this.rating = rating;
+	}
 
-    @Override
-    public String toString() {
-        return "{" +
-            " id='" + getId() + "'" +
-            ", reviewer='" + getReviewer() + "'" +
-            ", idea='" + getIdea() + "'" +
-            ", rating='" + getRating() + "'" +
-            ", details='" + getDetails() + "'" +
-            "}";
-    }
+	public String getDetails() {
+		return this.details;
+	}
 
+	public void setDetails(String details) {
+		this.details = details;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof Review)) {
-            return false;
-        }
-        Review review = (Review) o;
-        return id == review.id && Objects.equals(reviewer, review.reviewer) && Objects.equals(idea, review.idea) && Objects.equals(rating, review.rating) && Objects.equals(details, review.details);
-    }
+	@Override
+	public String toString() {
+		return "{" + " id='" + getId() + "'" + ", reviewer='" + getReviewer() + "'" + ", idea='" + getIdea() + "'"
+				+ ", rating='" + getRating() + "'" + ", details='" + getDetails() + "'" + "}";
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, reviewer, idea, rating, details);
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		if (!(o instanceof Review)) {
+			return false;
+		}
+		Review review = (Review) o;
+		return id == review.id && Objects.equals(reviewer, review.reviewer) && Objects.equals(idea, review.idea)
+				&& Objects.equals(rating, review.rating) && Objects.equals(details, review.details);
+	}
 
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, reviewer, idea, rating, details);
+	}
 
 }

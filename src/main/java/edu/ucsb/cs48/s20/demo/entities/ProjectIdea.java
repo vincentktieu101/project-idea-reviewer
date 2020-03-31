@@ -2,83 +2,95 @@ package edu.ucsb.cs48.s20.demo.entities;
 
 import java.util.Objects;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.PreRemove;
 import javax.validation.constraints.NotBlank;
+
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class ProjectIdea {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private long id;
 
-    @OneToOne
-    @JoinColumn(name = "student_id")
-    private Student student;
+	@OneToOne(mappedBy = "projectIdea", cascade = CascadeType.REFRESH)
+	@JoinColumn(name = "student_id")
+	private Student student;
 
-    @NotBlank
-    private String title;
+	@NotBlank
+	private String title;
 
-    @NotBlank
-    private String details;
+	@NotBlank
+	@Column(columnDefinition = "text")
+	private String details;
 
-    public long getId() {
-        return this.id;
-    }
+	@PreRemove
+	private void preRemove() {
+		student.setProjectIdea(null);
+	}
 
-    public void setId(long id) {
-        this.id = id;
-    }
+	public long getId() {
+		return this.id;
+	}
 
-    public Student getStudent() {
-        return this.student;
-    }
+	public void setId(long id) {
+		this.id = id;
+	}
 
-    public void setStudent(Student student) {
-        this.student = student;
-    }
+	public Student getStudent() {
+		return this.student;
+	}
 
-    public String getTitle() {
-        return this.title;
-    }
+	public void setStudent(Student student) {
+		this.student = student;
+	}
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
+	public String getTitle() {
+		return this.title;
+	}
 
-    public String getDetails() {
-        return this.details;
-    }
+	public void setTitle(String title) {
+		this.title = title;
+	}
 
-    public void setDetails(String details) {
-        this.details = details;
-    }
+	public String getDetails() {
+		return this.details;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (o == this)
-            return true;
-        if (!(o instanceof ProjectIdea)) {
-            return false;
-        }
-        ProjectIdea projectIdea = (ProjectIdea) o;
-        return id == projectIdea.id && Objects.equals(student, projectIdea.student)
-                && Objects.equals(title, projectIdea.title) && Objects.equals(details, projectIdea.details);
-    }
+	public void setDetails(String details) {
+		this.details = details;
+	}
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, student, title, details);
-    }
+	@Override
+	public boolean equals(Object o) {
+		if (o == this)
+			return true;
+		if (!(o instanceof ProjectIdea)) {
+			return false;
+		}
+		ProjectIdea projectIdea = (ProjectIdea) o;
+		return id == projectIdea.id && Objects.equals(student, projectIdea.student)
+				&& Objects.equals(title, projectIdea.title) && Objects.equals(details, projectIdea.details);
+	}
 
-    @Override
-    public String toString() {
-        return "{" + " id='" + getId() + "'" + ", student='" + getStudent() + "'" + ", title='" + getTitle() + "'"
-                + ", details='" + getDetails() + "'" + "}";
-    }
+	@Override
+	public int hashCode() {
+		return Objects.hash(id, student, title, details);
+	}
+
+	@Override
+	public String toString() {
+		return "{" + " id='" + getId() + "'" + ", student='" + getStudent() + "'" + ", title='" + getTitle() + "'"
+				+ ", details='" + getDetails() + "'" + "}";
+	}
 
 }

@@ -27,123 +27,118 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class ProjectIdeaController {
 
-    private Logger logger = LoggerFactory.getLogger(ProjectIdeaController.class);
+	private Logger logger = LoggerFactory.getLogger(ProjectIdeaController.class);
 
-    @Autowired
-    private MembershipService ms;
+	@Autowired
+	private MembershipService ms;
 
-    @Autowired
-    private StudentFlowAdvice studentFlowAdvice;
+	@Autowired
+	private StudentFlowAdvice studentFlowAdvice;
 
-    private StudentRepository studentRepository;
+	private StudentRepository studentRepository;
 
-    private ProjectIdeaRepository projectIdeaRepository;
+	private ProjectIdeaRepository projectIdeaRepository;
 
-    @Autowired
-    CSVToObjectService<Student> csvToObjectService;
+	@Autowired
+	CSVToObjectService<Student> csvToObjectService;
 
-    @Autowired
-    public ProjectIdeaController(ProjectIdeaRepository projectIdeaRepository, StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
-        this.projectIdeaRepository = projectIdeaRepository;
-    }
+	@Autowired
+	public ProjectIdeaController(ProjectIdeaRepository projectIdeaRepository, StudentRepository studentRepository) {
+		this.studentRepository = studentRepository;
+		this.projectIdeaRepository = projectIdeaRepository;
+	}
 
-    @GetMapping("/ideas")
-    public String ideas(Model model, OAuth2AuthenticationToken token, RedirectAttributes redirAttrs) {
-        String role = ms.role(token);
-        if (!role.equals("Admin")) {
-            redirAttrs.addFlashAttribute("alertDanger", "You do not have permission to access that page");
-            return "redirect:/";
-        }
-        model.addAttribute("ideas", projectIdeaRepository.findAll());
-        return "ideas/index";
-    }
+	@GetMapping("/ideas")
+	public String ideas(Model model, OAuth2AuthenticationToken token, RedirectAttributes redirAttrs) {
+		String role = ms.role(token);
+		if (!role.equals("Admin")) {
+			redirAttrs.addFlashAttribute("alertDanger", "You do not have permission to access that page");
+			return "redirect:/";
+		}
+		model.addAttribute("ideas", projectIdeaRepository.findAll());
+		return "ideas/index";
+	}
 
-    @PostMapping("/ideas/delete/{id}")
-    public String deleteIdea(@PathVariable("id") Long id, Model model, RedirectAttributes redirAttrs,
-            OAuth2AuthenticationToken token) {
-        String role = ms.role(token);
-        if (!role.equals("Admin")) {
-            redirAttrs.addFlashAttribute("alertDanger", "You do not have permission to access that page");
-            return "redirect:/";
-        }
+	@PostMapping("/ideas/delete/{id}")
+	public String deleteIdea(@PathVariable("id") Long id, Model model, RedirectAttributes redirAttrs,
+			OAuth2AuthenticationToken token) {
+		String role = ms.role(token);
+		if (!role.equals("Admin")) {
+			redirAttrs.addFlashAttribute("alertDanger", "You do not have permission to access that page");
+			return "redirect:/";
+		}
 
-        Optional<ProjectIdea> optionalIdea = projectIdeaRepository.findById(id);
-        if (!optionalIdea.isPresent()) {
-            redirAttrs.addFlashAttribute("alertDanger", "ProjectIdea with that id does not exist.");
-        } else {
-            ProjectIdea idea = optionalIdea.get();
-            String title = idea.getTitle();
-            Student student = idea.getStudent();
-            String name = idea.getStudent().getFname() + " " + idea.getStudent().getLname();
-            projectIdeaRepository.delete(idea);
-            studentRepository.save(student);
-            redirAttrs.addFlashAttribute("alertSuccess",
-                    "Idea " + title + " for student " + name + " successfully deleted.");
-        }
-        model.addAttribute("ideas", projectIdeaRepository.findAll());
-        return "redirect:/ideas";
-    }
+		Optional<ProjectIdea> optionalIdea = projectIdeaRepository.findById(id);
+		if (!optionalIdea.isPresent()) {
+			redirAttrs.addFlashAttribute("alertDanger", "ProjectIdea with that id does not exist.");
+		} else {
+			ProjectIdea idea = optionalIdea.get();
+			String title = idea.getTitle();
+			Student student = idea.getStudent();
+			String name = idea.getStudent().getFname() + " " + idea.getStudent().getLname();
+			projectIdeaRepository.delete(idea);
+			studentRepository.save(student);
+			redirAttrs.addFlashAttribute("alertSuccess",
+					"Idea " + title + " for student " + name + " successfully deleted.");
+		}
+		model.addAttribute("ideas", projectIdeaRepository.findAll());
+		return "redirect:/ideas";
+	}
 
-    @PostMapping("/ideas/add")
-    public String addIdea(@ModelAttribute("idea") Idea idea, Model model, OAuth2AuthenticationToken token,
-            BindingResult bindingResult, RedirectAttributes redirAttrs) {
-        String role = ms.role(token);
-        if (!role.equals("Admin") && !role.equals("Student")) {
-            redirAttrs.addFlashAttribute("alertDanger", "You do not have permission to access that page");
-            return "redirect:/";
-        }
+	@PostMapping("/ideas/add")
+	public String addIdea(@ModelAttribute("idea") Idea idea, Model model, OAuth2AuthenticationToken token,
+			BindingResult bindingResult, RedirectAttributes redirAttrs) {
+		String role = ms.role(token);
+		if (!role.equals("Admin") && !role.equals("Student")) {
+			redirAttrs.addFlashAttribute("alertDanger", "You do not have permission to access that page");
+			return "redirect:/";
+		}
 
-        boolean errors = false;
+		boolean errors = false;
 
-        model.addAttribute("titleHasErrors", false);
-        model.addAttribute("detailHasErrors", false);
+		model.addAttribute("titleHasErrors", false);
+		model.addAttribute("detailHasErrors", false);
 
-        if (idea.getTitle() == null || idea.getTitle().length() < 15) {
-            model.addAttribute("titleErrors", "Title is too short (15 characters minimum)");
-            model.addAttribute("titleHasErrors", true);
-            errors = true;
+		if (idea.getTitle() == null || idea.getTitle().length() < 15) {
+			model.addAttribute("titleErrors", "Title is too short (15 characters minimum)");
+			model.addAttribute("titleHasErrors", true);
+			errors = true;
 
-        }
+		}
 
-        if (idea.getTitle() != null && idea.getTitle().length() > 255) {
-            model.addAttribute("titleErrors", "Title is too long (255 chars max)");
-            model.addAttribute("titleHasErrors", true);
-            errors = true;
+		if (idea.getTitle() != null && idea.getTitle().length() > 255) {
+			model.addAttribute("titleErrors", "Title is too long (255 chars max)");
+			model.addAttribute("titleHasErrors", true);
+			errors = true;
 
-        }
+		}
 
-        if (idea.getDetails() == null || idea.getDetails().length() < 30) {
-            model.addAttribute("detailErrors", "Please add some more detail (at least 30 chars)");
-            model.addAttribute("detailHasErrors", true);
-            errors = true;
-        } else if (idea.getDetails().length() > 255) {
-            model.addAttribute("detailErrors", "Description was too long; please limit it to 255 characters (currently "
-                    + idea.getDetails().length() + " characters)");
-            model.addAttribute("detailHasErrors", true);
-            errors = true;
-        }
+		if (idea.getDetails() == null || idea.getDetails().length() < 30) {
+			model.addAttribute("detailErrors", "Please add some more detail (at least 30 chars)");
+			model.addAttribute("detailHasErrors", true);
+			errors = true;
+		}
 
-        if (!errors) {
-            Student student = studentFlowAdvice.getStudent(token);
-            ProjectIdea projectIdea = new ProjectIdea();
-            projectIdea.setStudent(student);
-            student.setProjectIdea(projectIdea);
-            projectIdea.setTitle(idea.getTitle());
-            projectIdea.setDetails(idea.getDetails());
-            projectIdeaRepository.save(projectIdea);
-            studentRepository.save(student);
-            return "redirect:/";
+		if (!errors) {
+			Student student = studentFlowAdvice.getStudent(token);
+			ProjectIdea projectIdea = new ProjectIdea();
+			projectIdea.setStudent(student);
+			student.setProjectIdea(projectIdea);
+			projectIdea.setTitle(idea.getTitle());
+			projectIdea.setDetails(idea.getDetails());
+			projectIdeaRepository.save(projectIdea);
+			studentRepository.save(student);
+			return "redirect:/reviews/perform";
 
-        }
+		}
 
-        model.addAttribute("idea", idea);
+		model.addAttribute("idea", idea);
 
-        logger.info("leaving ProjectIdeaController addIdea:");
-        logger.info("idea" + idea);
+		logger.info("leaving ProjectIdeaController addIdea:");
+		logger.info("idea" + idea);
 
-        return "index";
+		return "index";
 
-    }
+	}
 
 }

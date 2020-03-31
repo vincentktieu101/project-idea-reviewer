@@ -4,22 +4,13 @@ import edu.ucsb.cs48.s20.demo.advice.StudentFlowAdvice;
 import edu.ucsb.cs48.s20.demo.entities.ProjectIdea;
 import edu.ucsb.cs48.s20.demo.entities.Review;
 import edu.ucsb.cs48.s20.demo.entities.Student;
-import edu.ucsb.cs48.s20.demo.formbeans.Idea;
 import edu.ucsb.cs48.s20.demo.formbeans.ReviewBean;
 import edu.ucsb.cs48.s20.demo.repositories.ProjectIdeaRepository;
 import edu.ucsb.cs48.s20.demo.repositories.ReviewRepository;
 import edu.ucsb.cs48.s20.demo.repositories.StudentRepository;
-import edu.ucsb.cs48.s20.demo.services.CSVToObjectService;
 import edu.ucsb.cs48.s20.demo.services.MembershipService;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.nio.channels.IllegalSelectorException;
-import java.util.List;
 import java.util.Optional;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,10 +44,9 @@ public class ReviewsController {
 
     private ReviewRepository reviewRepository;
 
-   
-
     @Autowired
-    public ReviewsController(ProjectIdeaRepository projectIdeaRepository, StudentRepository studentRepository, ReviewRepository reviewRepository) {
+    public ReviewsController(ProjectIdeaRepository projectIdeaRepository, StudentRepository studentRepository,
+            ReviewRepository reviewRepository) {
         this.studentRepository = studentRepository;
         this.projectIdeaRepository = projectIdeaRepository;
         this.reviewRepository = reviewRepository;
@@ -71,6 +61,16 @@ public class ReviewsController {
         }
         model.addAttribute("reviews", reviewRepository.findAll());
         return "reviews/index";
+    }
+
+    @GetMapping("/reviews/perform")
+    public String performReview(Model model, OAuth2AuthenticationToken token, RedirectAttributes redirAttrs) {
+        String role = ms.role(token);
+        if (!role.equals("Admin") && !role.equals("Student")) {
+            redirAttrs.addFlashAttribute("alertDanger", "You do not have permission to access that page");
+            return "redirect:/";
+        }
+        return "reviews/perform";
     }
 
     @PostMapping("/reviews/delete/{id}")
@@ -88,28 +88,27 @@ public class ReviewsController {
         } else {
             Review review = optionalReview.get();
             reviewRepository.delete(review);
-            redirAttrs.addFlashAttribute("alertSuccess",
-                    "Review  " + id + " successfully deleted.");
+            redirAttrs.addFlashAttribute("alertSuccess", "Review  " + id + " successfully deleted.");
         }
         model.addAttribute("reviews", reviewRepository.findAll());
         return "redirect:/reviews";
     }
 
     @PostMapping("/reviews/add")
-    public String addReview(@ModelAttribute("review") ReviewBean reviewBean, Model model, OAuth2AuthenticationToken token,
-            BindingResult bindingResult, RedirectAttributes redirAttrs) {
+    public String addReview(@ModelAttribute("review") ReviewBean reviewBean, Model model,
+            OAuth2AuthenticationToken token, BindingResult bindingResult, RedirectAttributes redirAttrs) {
         String role = ms.role(token);
         if (!role.equals("Admin") && !role.equals("Student")) {
             redirAttrs.addFlashAttribute("alertDanger", "You do not have permission to access that page");
             return "redirect:/";
         }
 
-        boolean errors =false;
+        boolean errors = false;
 
         model.addAttribute("ratingHasErrors", false);
         model.addAttribute("detailHasErrors", false);
 
-        if (reviewBean.getRating() == null ) {
+        if (reviewBean.getRating() == null) {
             model.addAttribute("ratingErrors", "You must select a rating");
             model.addAttribute("ratingHasErrors", true);
             errors = true;
@@ -128,7 +127,7 @@ public class ReviewsController {
             Long ideaId = review.getIdea().getId();
             Optional<ProjectIdea> optionalProjectIdea = projectIdeaRepository.findById(review.getIdea().getId());
             if (!optionalProjectIdea.isPresent()) {
-                throw new IllegalStateException("Trying to create a review for non existing idea with id "+ ideaId);
+                throw new IllegalStateException("Trying to create a review for non existing idea with id " + ideaId);
             }
             ProjectIdea projectIdea = optionalProjectIdea.get();
 
@@ -142,12 +141,12 @@ public class ReviewsController {
         }
 
         model.addAttribute("review", reviewBean);
-    
+
         logger.info("leaving ReviewController addReview:");
-        logger.info("review"+reviewBean);
+        logger.info("review" + reviewBean);
 
         return "index";
-        
+
     }
 
 }
