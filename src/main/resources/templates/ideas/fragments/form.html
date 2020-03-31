@@ -8,8 +8,9 @@
 
     <div class="form-group">
         <label>Details</label>
-        <textarea th:field="*{details}" rows="4" cols="50">
+        <textarea class="form-control" th:field="*{details}" rows="4" cols="50">
         </textarea>
+
         <div th:if="${detailHasErrors}" class="alert alert-danger" role="alert" th:text="${detailErrors}"></div>
     </div>
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />

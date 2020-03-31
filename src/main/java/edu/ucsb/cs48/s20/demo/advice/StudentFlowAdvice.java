@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 @ControllerAdvice
 public class StudentFlowAdvice {
 
-	private final int NUMBER_OF_REVIEWS_REQUIRED = 1;
+	private final int NUMBER_OF_REVIEWS_REQUIRED = 2;
 
 	@Autowired
 	private MembershipService membershipService;

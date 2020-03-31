@@ -64,12 +64,13 @@ public class ReviewsController {
     }
 
     @GetMapping("/reviews/perform")
-    public String performReview(Model model, OAuth2AuthenticationToken token, RedirectAttributes redirAttrs) {
+    public String performReview(Model model, OAuth2AuthenticationToken token, RedirectAttributes redirAttrs, ReviewBean review) {
         String role = ms.role(token);
         if (!role.equals("Admin") && !role.equals("Student")) {
             redirAttrs.addFlashAttribute("alertDanger", "You do not have permission to access that page");
             return "redirect:/";
         }
+        model.addAttribute("review", review);
         return "reviews/perform";
     }
 
@@ -94,22 +95,30 @@ public class ReviewsController {
         return "redirect:/reviews";
     }
 
-    @PostMapping("/reviews/add")
+    // Add a review to a project_idea with {id}
+    @PostMapping("/reviews/add/{id}")
     public String addReview(@ModelAttribute("review") ReviewBean reviewBean, Model model,
-            OAuth2AuthenticationToken token, BindingResult bindingResult, RedirectAttributes redirAttrs) {
+            OAuth2AuthenticationToken token, BindingResult bindingResult, RedirectAttributes redirAttrs,
+                            @PathVariable("id") long ideaId) {
         String role = ms.role(token);
         if (!role.equals("Admin") && !role.equals("Student")) {
             redirAttrs.addFlashAttribute("alertDanger", "You do not have permission to access that page");
             return "redirect:/";
         }
-
         boolean errors = false;
 
         model.addAttribute("ratingHasErrors", false);
         model.addAttribute("detailHasErrors", false);
 
-        if (reviewBean.getRating() == null) {
-            model.addAttribute("ratingErrors", "You must select a rating");
+        int rating = 0;
+        try {
+            rating = Integer.parseInt(reviewBean.getRating());
+        } catch (Exception e) {
+            // error handled below
+        }
+
+        if (reviewBean.getRating() == null || rating < 1 || rating > 5) {
+            model.addAttribute("ratingErrors", "You must input a rating between 1 and 5 (inclusive)");
             model.addAttribute("ratingHasErrors", true);
             errors = true;
 
@@ -122,30 +131,34 @@ public class ReviewsController {
         }
 
         if (!errors) {
-            Review review = new Review();
             Student reviewer = studentFlowAdvice.getStudent(token);
-            Long ideaId = review.getIdea().getId();
-            Optional<ProjectIdea> optionalProjectIdea = projectIdeaRepository.findById(review.getIdea().getId());
+            Optional<ProjectIdea> optionalProjectIdea = projectIdeaRepository.findById(ideaId);
             if (!optionalProjectIdea.isPresent()) {
                 throw new IllegalStateException("Trying to create a review for non existing idea with id " + ideaId);
             }
             ProjectIdea projectIdea = optionalProjectIdea.get();
 
+
+            Review review = new Review();
             review.setReviewer(reviewer);
             review.setIdea(projectIdea);
-            review.setRating(reviewBean.getRating());
+            review.setRating(5);
             review.setDetails(reviewBean.getDetails());
             reviewRepository.save(review);
-            return "redirect:/";
+            if (studentFlowAdvice.getReviewsNeeded(token) < 1) {
+                return "redirect:/";
+            } else {
+                return "redirect:/reviews/perform";
+            }
 
         }
 
-        model.addAttribute("review", reviewBean);
+        model.addAttribute("review", new ReviewBean());
 
         logger.info("leaving ReviewController addReview:");
         logger.info("review" + reviewBean);
 
-        return "index";
+        return "/reviews/perform";
 
     }
 

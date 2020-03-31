@@ -36,9 +36,11 @@
       <td th:text="${r.reviewer.lname}"></td>
       <td th:text="${r.reviewer.email}"></td>
       <td>
+        <!-- this causes an error, fix this //todo
         <form th:action="@{/reviews/delete/{id}(id=${i.id})}" th:method="post">
           <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
           <button type="submit" class="btn btn-danger">Delete</button>
+          -->
         </form>
       </td>
     </tr>
