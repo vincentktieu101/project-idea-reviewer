@@ -75,6 +75,10 @@ public class ProjectIdea {
         this.details = details;
     }
 
+    public Set<Review> getReviews() {
+        return this.reviews;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == this)

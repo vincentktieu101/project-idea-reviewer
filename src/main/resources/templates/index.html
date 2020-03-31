@@ -35,7 +35,9 @@
           </div>
         </div>
 
-        <br \><h2>Your Project Idea</h2>
+        <br>
+        
+        <h2>Your Project Idea</h2>
         <table class="table">
           <tbody>
             <tr>
@@ -45,6 +47,22 @@
             <tr>
               <th>Details</th>
               <td th:text="${student.details()}"></td>
+            </tr>
+          </tbody>
+        </table>
+
+        <br>
+
+        <h2>Your Project Idea's Reviews</h2>
+        <table class="table">
+          <tbody>
+            <tr>
+              <th>Rating</th>
+              <th>Details</th>
+            </tr>
+            <tr th:each="r: ${student.getProjectIdea().getReviews()}">
+              <td th:text="${r.rating}"></td>
+              <td th:text="${r.details}"></td>
             </tr>
           </tbody>
         </table>
