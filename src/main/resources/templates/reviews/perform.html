@@ -8,7 +8,7 @@
     <div class="container">
       <div th:replace="bootstrap/bootstrap_nav_header.html"></div>
 
-      <br><h1>Giving Reviews</h1>
+      <br /><h1>Giving Reviews</h1>
       <br />
       <div class="alert alert-warning" role="alert">
         <span th:text="'You must review ' + ${reviewsNeededFromStudent} + ' more project ideas'"></span>
@@ -17,7 +17,7 @@
       <div th:if="${randomIdeaThatNeedsAReview}">
         <h3 th:text="'Project Idea: ' + ${randomIdeaThatNeedsAReview.title}"></h3>
         <span th:text="${randomIdeaThatNeedsAReview.details}"></span>
-        <br><br>
+        <br /><br />
         <h3>Your Review:</h3>
         <form  id="reviewForm" name="reviewForm" action="#" th:action="@{'/reviews/add/' + ${randomIdeaThatNeedsAReview.id}}" th:object="${review}" method="post">
 
