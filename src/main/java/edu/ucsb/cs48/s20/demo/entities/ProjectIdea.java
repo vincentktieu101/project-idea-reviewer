@@ -21,11 +21,11 @@ import javax.validation.constraints.NotBlank;
 @Entity
 public class ProjectIdea {
 
-    public static final int TITLE_CHAR_MIN=4;
-	public static final int TITLE_CHAR_MAX=60;
+    public static final int TITLE_CHAR_MIN = 4;
+    public static final int TITLE_CHAR_MAX = 60;
 
-	public static final int DETAILS_CHAR_MIN=30;
-	public static final int DETAILS_CHAR_MAX=255;
+    public static final int DETAILS_CHAR_MIN = 30;
+    public static final int DETAILS_CHAR_MAX = 255;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -84,6 +84,13 @@ public class ProjectIdea {
 
     public Set<Review> getReviews() {
         return this.reviews;
+    }
+
+    public Double getAvgRating() {
+        if (reviews.isEmpty())
+            return 0.0;
+
+        return reviews.stream().mapToInt((review) -> review.getRating()).average().orElse(0.0);
     }
 
     @Override
