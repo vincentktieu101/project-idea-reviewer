@@ -7,6 +7,7 @@ import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -15,6 +16,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 
 @Entity
@@ -46,6 +48,9 @@ public class Student {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "project_idea_id")
     private ProjectIdea projectIdea;
+
+    @OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL)
+    private Set<Review> reviews;
 
     public Student() {
     }
@@ -146,7 +151,7 @@ public class Student {
     }
 
     public int numReviewsEntered() {
-        return 0;
+        return reviews.size();
     }
 
 }

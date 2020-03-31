@@ -83,13 +83,6 @@ public class ProjectIdeaController {
 			String title = idea.getTitle();
 			Student student = idea.getStudent();
 			String name = idea.getStudent().getFname() + " " + idea.getStudent().getLname();
-
-			// Check if the project idea has any reviews. If it does, delete the reviews as well.
-			List<Review> reviews = reviewRepository.findByIdea(idea);
-			for(Review r : reviews) {
-				reviewRepository.delete(r);
-			}
-
 			projectIdeaRepository.delete(idea);
 			studentRepository.save(student);
 			redirAttrs.addFlashAttribute("alertSuccess",

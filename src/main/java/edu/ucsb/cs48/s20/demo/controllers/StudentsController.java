@@ -73,13 +73,6 @@ public class StudentsController {
         } else {
             Student student = optionalStudent.get();
             String email = student.getEmail();
-
-            // Check if the student has any reviews. If it does, delete the reviews as well.
-			List<Review> reviews = reviewRepository.findByReviewer(student);
-			for(Review r : reviews) {
-				reviewRepository.delete(r);
-			}
-
             studentRepository.delete(student);
             redirAttrs.addFlashAttribute("alertSuccess", "Student " + email + "successfully deleted.");
         }

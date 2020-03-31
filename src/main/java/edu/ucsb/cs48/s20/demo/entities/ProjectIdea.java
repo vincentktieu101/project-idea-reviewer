@@ -1,6 +1,10 @@
 package edu.ucsb.cs48.s20.demo.entities;
 
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
+
 import java.util.Objects;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -10,11 +14,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.PreRemove;
 import javax.validation.constraints.NotBlank;
-
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 public class ProjectIdea {
@@ -32,6 +34,9 @@ public class ProjectIdea {
     @NotBlank
     @Column(columnDefinition = "text")
     private String details;
+
+    @OneToMany(mappedBy = "idea", cascade = CascadeType.ALL)
+    private Set<Review> reviews;
 
     @PreRemove
     private void preRemove() {
