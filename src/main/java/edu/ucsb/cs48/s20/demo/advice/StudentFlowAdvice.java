@@ -114,8 +114,24 @@ public class StudentFlowAdvice {
 					return reviews.size() < NUMBER_OF_REVIEWS_REQUIRED;
 				});
 
+
 		List<ProjectIdea> remainingProjects = projects.collect(Collectors.toList());
 
+		if (remainingProjects.isEmpty()) {
+			projects = StreamSupport.stream(projectIdeaRepository.findAll().spliterator(), false)
+			.filter((idea) -> {
+				List<Review> reviews = reviewRepository.findByIdea(idea);
+				if (idea.getStudent().equals(student))
+					return false;
+				if (reviews.stream().anyMatch((review) -> review.getReviewer().equals(student)))
+					return false;
+				return true;
+			});
+
+		}
+
+		remainingProjects = projects.collect(Collectors.toList());
+		
 		if (remainingProjects.isEmpty()) {
 			return null;
 		}
