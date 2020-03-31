@@ -142,7 +142,7 @@ public class ReviewsController {
             Review review = new Review();
             review.setReviewer(reviewer);
             review.setIdea(projectIdea);
-            review.setRating(5);
+            review.setRating(Integer.parseInt(reviewBean.getRating()));
             review.setDetails(reviewBean.getDetails());
             reviewRepository.save(review);
             if (studentFlowAdvice.getReviewsNeeded(token) < 1) {
