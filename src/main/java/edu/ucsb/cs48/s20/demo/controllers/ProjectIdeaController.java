@@ -106,22 +106,35 @@ public class ProjectIdeaController {
 		model.addAttribute("titleHasErrors", false);
 		model.addAttribute("detailHasErrors", false);
 
-		if (idea.getTitle() == null || idea.getTitle().length() < 15) {
-			model.addAttribute("titleErrors", "Title is too short (15 characters minimum)");
-			model.addAttribute("titleHasErrors", true);
-			errors = true;
+		String titleErrors = "";
+		String detailErrors = "";
 
+		if (idea.getTitle() == null || idea.getTitle().length() < ProjectIdea.TITLE_CHAR_MIN) {
+			int titleLength = (idea.getTitle()==null ? 0 : idea.getTitle().length());
+			titleErrors += "Title is too short (" + ProjectIdea.TITLE_CHAR_MIN + " characters minimum). Currently: " + titleLength + " chars.";
 		}
 
-		if (idea.getTitle() != null && idea.getTitle().length() > 255) {
-			model.addAttribute("titleErrors", "Title is too long (255 chars max)");
-			model.addAttribute("titleHasErrors", true);
-			errors = true;
-
+		if (idea.getTitle() != null && idea.getTitle().length() > ProjectIdea.TITLE_CHAR_MAX) {
+			titleErrors += "Please limit your title to " + ProjectIdea.TITLE_CHAR_MAX  + " chars or fewer. Currently: " + idea.getTitle().length() + " chars. ";
 		}
 
-		if (idea.getDetails() == null || idea.getDetails().length() < 30) {
-			model.addAttribute("detailErrors", "Please add some more detail (at least 30 chars)");
+		if (!titleErrors.equals("")) {
+			model.addAttribute("titleErrors",titleErrors);
+			model.addAttribute("titleHasErrors", true);
+			errors = true;
+		}
+
+		if (idea.getDetails() == null || idea.getDetails().length() < ProjectIdea.DETAILS_CHAR_MIN ) {
+			int detailsLength = (idea.getDetails()==null ? 0 : idea.getDetails().length());
+			detailErrors += "Please add some more detail (at least " + ProjectIdea.DETAILS_CHAR_MIN + " characters). Currently: " + detailsLength + " chars.";
+		}
+
+		if (idea.getDetails() != null && idea.getDetails().length() > ProjectIdea.DETAILS_CHAR_MAX ) {
+			detailErrors += "Please limit your detailed desription to " + ProjectIdea.DETAILS_CHAR_MAX  + " chars or fewer (currently: " + idea.getDetails().length() + " chars). ";
+		}
+
+		if (!detailErrors.equals("")) {
+			model.addAttribute("detailErrors",detailErrors);
 			model.addAttribute("detailHasErrors", true);
 			errors = true;
 		}

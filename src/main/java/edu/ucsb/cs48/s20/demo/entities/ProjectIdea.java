@@ -20,6 +20,13 @@ import javax.validation.constraints.NotBlank;
 
 @Entity
 public class ProjectIdea {
+
+    public static final int TITLE_CHAR_MIN=4;
+	public static final int TITLE_CHAR_MAX=60;
+
+	public static final int DETAILS_CHAR_MIN=30;
+	public static final int DETAILS_CHAR_MAX=255;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
