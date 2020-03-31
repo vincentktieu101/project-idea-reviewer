@@ -3,15 +3,15 @@ package edu.ucsb.cs48.s20.demo.formbeans;
 import java.util.Objects;
 
 public class ReviewBean {
-    private Integer rating;
+    private String rating; // must be a string or spring throws an error
     private String details;
 
 
-    public Integer getRating() {
+    public String getRating() {
         return this.rating;
     }
 
-    public void setRating(Integer rating) {
+    public void setRating(String rating) {
         this.rating = rating;
     }
 
@@ -48,7 +48,5 @@ public class ReviewBean {
     public int hashCode() {
         return Objects.hash(rating, details);
     }
-    
-
 
 }

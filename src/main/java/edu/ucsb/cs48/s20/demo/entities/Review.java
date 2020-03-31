@@ -1,35 +1,33 @@
 package edu.ucsb.cs48.s20.demo.entities;
 
-
 import java.util.Objects;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-   
-    @OneToOne
+
+    @ManyToOne
     @JoinColumn(name = "student_id")
     private Student reviewer;
-    
-    @OneToOne
+
+    @ManyToOne
     @JoinColumn(name = "idea_id")
     private ProjectIdea idea;
-    
+
     private Integer rating;
 
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "text")
     private String details;
 
+    @PreRemove
+    private void preRemove() {
+        setIdea(null);
+        setReviewer(null);
+    }
 
     public long getId() {
         return this.id;
@@ -70,19 +68,12 @@ public class Review {
     public void setDetails(String details) {
         this.details = details;
     }
-    
 
     @Override
     public String toString() {
-        return "{" +
-            " id='" + getId() + "'" +
-            ", reviewer='" + getReviewer() + "'" +
-            ", idea='" + getIdea() + "'" +
-            ", rating='" + getRating() + "'" +
-            ", details='" + getDetails() + "'" +
-            "}";
+        return "{" + " id='" + getId() + "'" + ", reviewer='" + getReviewer() + "'" + ", idea='" + getIdea() + "'"
+                + ", rating='" + getRating() + "'" + ", details='" + getDetails() + "'" + "}";
     }
-
 
     @Override
     public boolean equals(Object o) {
@@ -92,13 +83,13 @@ public class Review {
             return false;
         }
         Review review = (Review) o;
-        return id == review.id && Objects.equals(reviewer, review.reviewer) && Objects.equals(idea, review.idea) && Objects.equals(rating, review.rating) && Objects.equals(details, review.details);
+        return id == review.id && Objects.equals(reviewer, review.reviewer) && Objects.equals(idea, review.idea)
+                && Objects.equals(rating, review.rating) && Objects.equals(details, review.details);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(id, reviewer, idea, rating, details);
     }
-
 
 }

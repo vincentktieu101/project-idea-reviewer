@@ -3,14 +3,20 @@ package edu.ucsb.cs48.s20.demo.entities;
 import com.opencsv.bean.CsvBindByName;
 import com.opencsv.bean.CsvBindByPosition;
 
-import java.util.Objects;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.Objects;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotBlank;
 
 @Entity
@@ -39,9 +45,12 @@ public class Student {
     @NotBlank
     private String perm;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "project_idea_id")
     private ProjectIdea projectIdea;
+
+    @OneToMany(mappedBy = "reviewer", cascade = CascadeType.ALL)
+    private Set<Review> reviews;
 
     public Student() {
     }
@@ -101,7 +110,8 @@ public class Student {
             return false;
         }
         Student student = (Student) o;
-        return id == student.id && Objects.equals(email, student.email) && Objects.equals(fname, student.fname) && Objects.equals(lname, student.lname) && Objects.equals(perm, student.perm);
+        return id == student.id && Objects.equals(email, student.email) && Objects.equals(fname, student.fname)
+                && Objects.equals(lname, student.lname) && Objects.equals(perm, student.perm);
     }
 
     @Override
@@ -109,19 +119,12 @@ public class Student {
         return Objects.hash(id, email, fname, lname, perm);
     }
 
-
     @Override
     public String toString() {
-        return "{" +
-            " id='" + getId() + "'" +
-            ", email='" + getEmail() + "'" +
-            ", fname='" + getFname() + "'" +
-            ", lname='" + getLname() + "'" +
-            ", perm='" + getPerm() + "'" +
-            ", projectIdea='" + getProjectIdea().getTitle() + "'" +
-            "}";
+        return "{" + " id='" + getId() + "'" + ", email='" + getEmail() + "'" + ", fname='" + getFname() + "'"
+                + ", lname='" + getLname() + "'" + ", perm='" + getPerm() + "'" + ", projectIdea='"
+                + getProjectIdea().getTitle() + "'" + "}";
     }
-    
 
     public ProjectIdea getProjectIdea() {
         return this.projectIdea;
@@ -132,23 +135,23 @@ public class Student {
     }
 
     public String title() {
-        if (projectIdea==null) 
-          return "";
-        if (projectIdea.getTitle()==null)
-          return "";
+        if (projectIdea == null)
+            return "";
+        if (projectIdea.getTitle() == null)
+            return "";
         return projectIdea.getTitle();
     }
-   
+
     public String details() {
-        if (projectIdea==null) 
-          return "";
-        if (projectIdea.getDetails()==null)
-          return "";
+        if (projectIdea == null)
+            return "";
+        if (projectIdea.getDetails() == null)
+            return "";
         return projectIdea.getDetails();
     }
 
     public int numReviewsEntered() {
-        return 0;
+        return reviews.size();
     }
 
 }

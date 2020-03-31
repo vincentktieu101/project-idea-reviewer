@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+  <head>
+    <div th:replace="bootstrap/title.html"></div>
+    <div th:replace="bootstrap/bootstrap_head.html"></div>
+  </head>
+  <body>
+    <div class="container">
+      <div th:replace="bootstrap/bootstrap_nav_header.html"></div>
+
+      <br /><h1>Giving Reviews</h1>
+      <br />
+      <div class="alert alert-warning" role="alert">
+        <span th:text="'You must review ' + ${reviewsNeededFromStudent} + ' more project ideas'"></span>
+      </div>
+      <br />
+      <div th:if="${randomIdeaThatNeedsAReview}">
+        <h3 th:text="'Project Idea: ' + ${randomIdeaThatNeedsAReview.title}"></h3>
+        <span th:text="${randomIdeaThatNeedsAReview.details}"></span>
+        <br /><br />
+        <h3>Your Review:</h3>
+        <form  id="reviewForm" name="reviewForm" action="#" th:action="@{'/reviews/add/' + ${randomIdeaThatNeedsAReview.id}}" th:object="${review}" method="post">
+
+          <div class="form-group">
+            <label>Rating (enter an integer 1-5, 5 being an incredible idea)</label>
+            <input type="text" id="rating-field" class="form-control" th:field="*{rating}" />
+            <div th:if="${ratingHasErrors}" class="alert alert-danger" role="alert" th:text="${ratingErrors}"></div>
+          </div>
+
+          <div class="form-group">
+            <label>Details</label>
+            <textarea  class="form-control" th:field="*{details}" id="details" rows="4" cols="50">
+        </textarea>
+
+            <div th:if="${detailHasErrors}" class="alert alert-danger" role="alert" th:text="${detailErrors}"></div>
+          </div>
+          <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+          <button type="submit" class="btn btn-primary" hidden>Submit</button>
+        </form>
+
+        <button class="btn btn-primary" onclick="validate()">Submit</button>
+
+      </div>
+
+
+      <div th:unless="${randomIdeaThatNeedsAReview}">
+        <div class="alert alert-danger" role="alert">
+          No ideas currently need a review; please check back later.
+        </div>
+      </div>
+
+      <div th:replace="bootstrap/bootstrap_footer.html"></div>
+    </div>
+    <div th:replace="bootstrap/bootstrap_scripts.html"></div>
+
+    <!-- JS text field validation - if done server side, the user's in progress review will be deleted in event of an error ! -->
+  <script>
+    function validate() {
+      let rating = document.getElementById("rating-field").value;
+      let details = document.getElementById("details").value;
+      if (!(rating >= 1 && rating <= 5)) {
+        alert("Error: Rating must be an integer between 1-5 (inclusive)");
+        return;
+      }
+      if (details.length < 20) {
+        alert("Error: Please provide more details");
+        return;
+      }
+      document.getElementById("reviewForm").submit();
+    }
+  </script>
+  </body>
+</html>

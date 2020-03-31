@@ -1,7 +1,9 @@
 package edu.ucsb.cs48.s20.demo.controllers;
 
 import edu.ucsb.cs48.s20.demo.entities.Student;
+import edu.ucsb.cs48.s20.demo.entities.Review;
 import edu.ucsb.cs48.s20.demo.repositories.StudentRepository;
+import edu.ucsb.cs48.s20.demo.repositories.ReviewRepository;
 import edu.ucsb.cs48.s20.demo.services.CSVToObjectService;
 import edu.ucsb.cs48.s20.demo.services.MembershipService;
 
@@ -34,12 +36,15 @@ public class StudentsController {
 
     private StudentRepository studentRepository;
 
+    private ReviewRepository reviewRepository;
+
     @Autowired
     CSVToObjectService<Student> csvToObjectService;
 
     @Autowired
-    public StudentsController(StudentRepository repo) {
+    public StudentsController(StudentRepository repo, ReviewRepository reviewRepository) {
         this.studentRepository = repo;
+        this.reviewRepository = reviewRepository;
     }
 
     @GetMapping("/students")

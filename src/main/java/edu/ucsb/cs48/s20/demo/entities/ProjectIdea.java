@@ -1,22 +1,37 @@
 package edu.ucsb.cs48.s20.demo.entities;
 
-import java.util.Objects;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.Objects;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.PreRemove;
 import javax.validation.constraints.NotBlank;
 
 @Entity
 public class ProjectIdea {
+
+    public static final int TITLE_CHAR_MIN=4;
+	public static final int TITLE_CHAR_MAX=60;
+
+	public static final int DETAILS_CHAR_MIN=30;
+	public static final int DETAILS_CHAR_MAX=255;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @OneToOne
+    @OneToOne(mappedBy = "projectIdea", cascade = CascadeType.REFRESH)
     @JoinColumn(name = "student_id")
     private Student student;
 
@@ -24,7 +39,16 @@ public class ProjectIdea {
     private String title;
 
     @NotBlank
+    @Column(columnDefinition = "text")
     private String details;
+
+    @OneToMany(mappedBy = "idea", cascade = CascadeType.ALL)
+    private Set<Review> reviews;
+
+    @PreRemove
+    private void preRemove() {
+        student.setProjectIdea(null);
+    }
 
     public long getId() {
         return this.id;
@@ -56,6 +80,10 @@ public class ProjectIdea {
 
     public void setDetails(String details) {
         this.details = details;
+    }
+
+    public Set<Review> getReviews() {
+        return this.reviews;
     }
 
     @Override
