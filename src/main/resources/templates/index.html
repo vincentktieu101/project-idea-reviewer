@@ -1,88 +1,87 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org" lang="en">
-  <head>
+<head>
     <div th:replace="bootstrap/title.html"></div>
     <div th:replace="bootstrap/bootstrap_head.html"></div>
-  </head>
+</head>
 
-  <body>
-    <div class="container">
-      <div th:replace="bootstrap/bootstrap_nav_header.html"></div>
+<body>
+<div class="container">
+    <div th:replace="bootstrap/bootstrap_nav_header.html"></div>
 
-      <br />
-      <h1>Welcome to the Project Idea Reviewer</h1>
+    <br/>
+    <h1>Welcome to the Project Idea Reviewer</h1>
 
-      <div th:if="${needsToSubmitProjectIdea}">
+    <div th:if="${needsToSubmitProjectIdea}">
         <p>To get started, submit your project idea below.</p>
         <p>
-          After you submit your project idea, you can rate other students
-          project ideas as they become available for rating.
+            After you submit your project idea, you can rate other students
+            project ideas as they become available for rating.
         </p>
         <div th:replace="ideas/fragments/form.html"></div>
-      </div>
+    </div>
 
-      <div th:if="${isStudent}">
+    <div th:if="${isStudent}">
         <div th:unless="${needsToSubmitProjectIdea}">
-          <!-- Top banners so user knows if they need to submit more reviews OR if they are done w/ the assignment -->
-          <div th:if="${reviewsNeededFromStudent} > 0">
-            <div class="alert alert-warning" role="alert">
+            <!-- Top banners so user knows if they need to submit more reviews OR if they are done w/ the assignment -->
+            <div th:if="${reviewsNeededFromStudent} > 0">
+                <div class="alert alert-warning" role="alert">
               <span
-                th:text="'You must review ' + ${reviewsNeededFromStudent} + ' more project ideas. '"
+                      th:text="'You must review ' + ${reviewsNeededFromStudent} + ' more project ideas. '"
               ></span
               ><a href="reviews/perform"
                 >Click here to review other project ideas</a
-              >
+                >
+                </div>
             </div>
-          </div>
-        </div>
-        <div th:unless="${reviewsNeededFromStudent} > 0">
-          <div class="alert alert-success" role="alert">
-            <span
-              ><strong>All done!</strong> You have reviewed a sufficient number
-              of project ideas.
-              <a href="reviews/perform"
-                >Click here to review another project idea</a
-              ></span
-            >
-          </div>
-        </div>
-
-          <br />
-
           <h2>Your Project Idea</h2>
           <table class="table">
             <tbody>
-              <tr>
-                <th>Title</th>
-                <td th:text="${student.title()}"></td>
-              </tr>
-              <tr>
-                <th>Details</th>
-                <td th:text="${student.details()}"></td>
-              </tr>
+            <tr>
+              <th>Title</th>
+              <td th:text="${student.title()}"></td>
+            </tr>
+            <tr>
+              <th>Details</th>
+              <td th:text="${student.details()}"></td>
+            </tr>
             </tbody>
           </table>
 
-          <br />
+          <br/>
           <div th:if="${showStudentReviewsOfTheirIdea}">
             <h2>Your Project Idea's Reviews</h2>
             <table class="table">
               <tbody>
-                <tr>
-                  <th>Rating</th>
-                  <th>Details</th>
-                </tr>
-                <tr th:each="r: ${student.getProjectIdea().getReviews()}">
-                  <td th:text="${r.rating}"></td>
-                  <td th:text="${r.details}"></td>
-                </tr>
+              <tr>
+                <th>Rating</th>
+                <th>Details</th>
+              </tr>
+              <tr th:each="r: ${student.getProjectIdea().getReviews()}">
+                <td th:text="${r.rating}"></td>
+                <td th:text="${r.details}"></td>
+              </tr>
               </tbody>
             </table>
           </div>
-      </div>
+        </div>
+        <div th:unless="${reviewsNeededFromStudent} > 0">
+            <div class="alert alert-success" role="alert">
+            <span
+            ><strong>All done!</strong> You have reviewed a sufficient number
+              of project ideas.
+              <a href="reviews/perform"
+              >Click here to review another project idea</a
+              ></span
+            >
+            </div>
+            <br/>
+        </div>
 
-      <div th:replace="bootstrap/bootstrap_footer.html"></div>
     </div>
-    <div th:replace="bootstrap/bootstrap_scripts.html"></div>
-  </body>
+
+    <div th:replace="bootstrap/bootstrap_footer.html"></div>
+</div>
+<div th:replace="bootstrap/bootstrap_scripts.html"></div>
+</body>
 </html>
