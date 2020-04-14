@@ -1,7 +1,9 @@
 package edu.ucsb.cs48.s20.demo.controllers;
 
+import edu.ucsb.cs48.s20.demo.Application;
 import edu.ucsb.cs48.s20.demo.advice.AuthControllerAdvice;
 import edu.ucsb.cs48.s20.demo.advice.StudentFlowAdvice;
+import edu.ucsb.cs48.s20.demo.services.GoogleMembershipService;
 import edu.ucsb.cs48.s20.demo.services.MembershipService;
 import org.aspectj.lang.annotation.Before;
 import org.junit.jupiter.api.BeforeAll;
@@ -14,26 +16,29 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.OAuth2AuthenticatedPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import utils.OAuthUtils;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 import org.junit.runner.RunWith;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-// @RunWith(SpringRunner.class)
+@RunWith(SpringRunner.class)
 @WebMvcTest(ApplicationController.class)
-public class OAuthTest {
+@ContextConfiguration(classes={Application.class, AuthControllerAdvice.class, GoogleMembershipService.class})
 
-    private OAuth2User principal;
+public class OAuthTest {
 
     @Autowired
     public static MembershipService ms;
@@ -43,7 +48,7 @@ public class OAuthTest {
 
     @MockBean
     private StudentFlowAdvice sfa;
-    
+
     @MockBean
     private AuthControllerAdvice aca;
 
@@ -58,13 +63,25 @@ public class OAuthTest {
         }
     }
 
-    
-    @Test
+
+    //@Test
+    /**
+     * Tests that we can successfully authenticate with an oauth user
+
     public void testOauth() throws Exception {
-        //OAuth2AuthenticationToken token =  OAuthUtils.getOauthAuthenticationFor(principal);
-        principal = OAuthUtils.createOAuth2User("Chris Gaucho", "cgaucho@example.com");
         mvc.perform(MockMvcRequestBuilders.get("/")
-                .with(authentication(OAuthUtils.getOauthAuthenticationFor(principal))).accept(MediaType.TEXT_HTML))
+                .with(authentication(OAuthUtils.getOauthAuthenticationFor(guest_principal))).accept(MediaType.TEXT_HTML))
                 .andExpect(status().isOk());
+    }
+    */
+
+    @Test
+    /**
+     * Test that a guest account can properly access the app as a guest
+     */
+    public void testUnauthenticated() throws Exception {
+        OAuth2User guest = OAuthUtils.createOAuth2User("Chris Gaucho", "pamplona@ucsb.edu");
+        System.out.println(mvc.perform(MockMvcRequestBuilders.get("/")).toString());
+        assert(false);
     }
 }
