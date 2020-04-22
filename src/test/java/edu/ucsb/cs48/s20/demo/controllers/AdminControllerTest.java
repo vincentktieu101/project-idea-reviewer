@@ -96,7 +96,7 @@ public class AdminControllerTest {
     }
 
     /**
-     * This test makes sure students can not access the /admin endpoint
+     * This test makes sure admins can access the /admin endpoint
      */
     @Test
     public void testAdminAccess() throws Exception {
