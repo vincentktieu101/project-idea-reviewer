@@ -115,7 +115,7 @@ public class NavbarTest {
                 .andExpect(xpath("/html/body/div[@class='container']/nav[@class='navbar navbar-expand-lg navbar-light bg-light']/div[@id='navbarTogglerDemo03']/ul[@class='nav navbar-nav navbar-right']/li[1]/a")
                         .string("Joe"));
 
-        // check role in header is (Guest)
+        // check role in header is (Student)
         mvc.perform(MockMvcRequestBuilders.get("/").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
                 .andExpect(content().contentType("text/html;charset=UTF-8"))
                 .andExpect(xpath("/html/body/div[@class='container']/nav[@class='navbar navbar-expand-lg navbar-light bg-light']/div[@id='navbarTogglerDemo03']/ul[@class='nav navbar-nav navbar-right']/li[2]")
