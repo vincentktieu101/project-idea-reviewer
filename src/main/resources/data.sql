@@ -9,5 +9,7 @@ INSERT INTO student (email, fname, lname, perm) VALUES ('andrewgege@gmail.co','A
 INSERT INTO student (email, fname, lname, perm, project_idea_id) VALUES ('colebergmann@gmail.com','Cole','Bergmann', 44444, 2);
 INSERT INTO student (email, fname, lname, perm) VALUES ('bryan.terce@gmail.com','Bryan','Terce', 566555);
 INSERT INTO student (email, fname, lname, perm) VALUES ('andylord288@gmail.com','Andrew','Lu', 777777);
+INSERT INTO student (email, fname, lname, perm) VALUES ('jacquimai27@gmail.com','Jacqui','Mai', 123456);
+
 
 INSERT INTO review (details, rating, idea_id, student_id) VALUES ('test details', 5, 1, 1)

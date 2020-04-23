@@ -25,6 +25,15 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import org.springframework.security.oauth2.core.user.OAuth2User;
+import utils.OAuthUtils;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.junit.Before;
+import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.any;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+
 @RunWith(SpringRunner.class)
 @WebMvcTest(ApplicationController.class)
 public class HomePageTest {
@@ -33,7 +42,10 @@ public class HomePageTest {
 	private MockMvc mvc;
 
 	@MockBean
-	private AuthControllerAdvice aca;
+    private AuthControllerAdvice aca;
+    
+    @MockBean
+	private StudentFlowAdvice sfa;
 	
 	@MockBean
     private ClientRegistrationRepository crr;
@@ -47,20 +59,48 @@ public class HomePageTest {
     @MockBean
     private StudentRepository sr;
 
-    @MockBean
-    private StudentFlowAdvice studentFlowAdvice;
+    private Authentication mockAuthentication;
 
+    @Before
+    public void setUp() {
+        final OAuth2User principal = OAuthUtils.createOAuth2User("Chris Gaucho", "cgaucho@ucsb.edu");
+        mockAuthentication = OAuthUtils.getOauthAuthenticationFor(principal);
+        when(ms.isMember((OAuth2AuthenticationToken) mockAuthentication)).thenReturn(true);
+    }
 
+    /*generic test to check that any request to home page succeeds*/
     @Test
     public void getHomePage_ContentType() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
                 .andExpect(content().contentType("text/html;charset=UTF-8"));
     }
  
+    /*test content of the page- title should be "CS48 demo"*/
     @Test
     public void getHomePage_hasCorrectTitle() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/").accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
                 .andExpect(xpath("//title").exists())
                 .andExpect(xpath("//title").string("CS48 demo"));
+    }
+
+    /*test that student can access home page when logged in
+    since this is a new student, they should have no submitted ideas and should see the text box*/
+    @Test
+    public void studentWithNoSubmissions_hasTextBox() throws Exception{
+        when(aca.getFirstName(any())).thenReturn("Joe");
+        when(aca.getLastName(any())).thenReturn("Gaucho");
+        when(aca.getEmail(any())).thenReturn("joegaucho@ucsb.edu");
+        when(aca.getRole(any())).thenReturn("Student");
+        when(aca.getIsLoggedIn(any())).thenReturn(true);
+        when(sfa.needsToSubmitProjectIdea(any())).thenReturn(true);
+        when(sfa.getReviewsNeeded(any())).thenReturn(3);
+        // when(aca.getRole(any())).thenReturn("Student");
+        when(aca.getIsStudent(any())).thenReturn(true);
+        System.out.println("STUDENT? "+(aca.getIsStudent((OAuth2AuthenticationToken) mockAuthentication)));
+
+        mvc.perform(MockMvcRequestBuilders.get("/").with(authentication(mockAuthentication)).accept(MediaType.TEXT_HTML))
+        .andExpect(status().isOk()).andExpect(xpath("/html/body/div/div[1]/p[1]").string("To get started, submit your project idea below."))
+        .andExpect(xpath("//*[@id='details']").exists());
+
     }
 }
