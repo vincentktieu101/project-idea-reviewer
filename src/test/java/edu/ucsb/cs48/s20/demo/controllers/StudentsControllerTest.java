@@ -85,27 +85,6 @@ public class StudentsControllerTest {
     }
 
     /**
-     * This test makes sure admins can access the /students endpoint
-     */
-    @Test
-    public void testAdminPageAccessForAdmins() throws Exception {
-        when(ms.role(any())).thenReturn("Admin");
-        mvc.perform(MockMvcRequestBuilders.get("/students").with(authentication(mockAuthentication)).accept(MediaType.TEXT_HTML))
-                .andExpect(status().isOk());
-    }
-
-    /**
-     * This test makes sure students can not access the /students endpoint
-     */
-    @Test
-    public void testAdminPageAccessForStudents() throws Exception {
-        when(ms.role(any())).thenReturn("Student");
-        mvc.perform(MockMvcRequestBuilders.get("/students").with(authentication(mockAuthentication)).accept(MediaType.TEXT_HTML))
-                .andExpect(status().is3xxRedirection());
-        // Note: with(authentication(mockAuthentication)) is required to bypass Spring's HttpSecurity that would otherwise redirect guest users to the login page
-    }
-
-    /**
      * This test directly tests the information the /students endpoint injects into the Model
      * The method studentsController.students is called directly vs fully rendering html and using xpath
      *
