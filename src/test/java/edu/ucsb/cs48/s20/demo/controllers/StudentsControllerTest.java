@@ -1,23 +1,20 @@
 package edu.ucsb.cs48.s20.demo.controllers;
 
-import edu.ucsb.cs48.s20.demo.advice.AuthControllerAdvice;
-import edu.ucsb.cs48.s20.demo.advice.StudentFlowAdvice;
 import edu.ucsb.cs48.s20.demo.entities.Student;
-import edu.ucsb.cs48.s20.demo.repositories.AppUserRepository;
 import edu.ucsb.cs48.s20.demo.repositories.StudentRepository;
-import edu.ucsb.cs48.s20.demo.services.GoogleMembershipService;
 import edu.ucsb.cs48.s20.demo.services.MembershipService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
@@ -25,14 +22,10 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.ui.ExtendedModelMap;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import utils.OAuthUtils;
 
-import javax.validation.constraints.Null;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -57,25 +50,10 @@ public class StudentsControllerTest {
     private StudentsController studentsController;
 
     @MockBean
-    private AuthControllerAdvice aca;
-
-    @MockBean
-    private ClientRegistrationRepository crr;
-
-    @MockBean
     private MembershipService ms;
 
     @MockBean
-    private GoogleMembershipService gms;
-
-    @MockBean
-    private AppUserRepository aur;
-
-    @MockBean
     private StudentRepository sr;
-
-    @MockBean
-    private StudentFlowAdvice studentFlowAdvice;
 
     private Authentication mockAuthentication;
 
@@ -234,6 +212,43 @@ public class StudentsControllerTest {
 
         // Assert model has correct attribute
         assert(model.getAttribute("students").equals(Arrays.asList(joe, carl)));
+    }
+
+    /**
+     * This tests the csv upload functionality at /students/upload
+     */
+    @Test
+    public void testValidCSV() throws Exception {
+        // Create redirAttrs that the controller can write to (a success/error message)
+        RedirectAttributes redirAttrs = new RedirectAttributesModelMap();
+
+        // Mock the user role as an Admin
+        when(ms.role(any())).thenReturn("Admin");
+
+        // Prepare the temp csv to upload
+        String csvContents =
+                "Enrl Cd,Perm #,Grade,Final Units,Student Last,Student First Middle,Quarter,Course ID,Section,Meeting Time(s) / Location(s),Email,ClassLevel,Major1,Major2,Date/Time,Pronoun\n" +
+                "\n" +
+                "676,12345,,4.0,Gaucho,Joe,S20,CMPSC48,0100,T R   5:00- 6:15             M      2:00- 2:50 PHELP 1530  M      3:00- 3:50 PHELP 1530  ,joegaucho@ucsb.edu,JR,CMPSC,,4/9/2020 10:47:39 AM,";
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("students.csv","students.csv",
+                "text/plain", csvContents.getBytes());
+
+        // Call the controller
+        studentsController.uploadCSV(mockMultipartFile,(OAuth2AuthenticationToken) mockAuthentication, redirAttrs);
+
+        // Capture the argument X that the controller passed to sr.saveAll(X)
+        final ArgumentCaptor<List<Student>> captor = ArgumentCaptor.forClass(List.class);
+        verify(sr).saveAll(captor.capture());
+
+        // Make sure captured value is correct
+        assert(captor.getValue().size() == 1);
+        assert(captor.getValue().get(0).getEmail().equals("joegaucho@ucsb.edu"));
+        assert(captor.getValue().get(0).getFname().equals("Joe"));
+        assert(captor.getValue().get(0).getLname().equals("Gaucho"));
+        assert(captor.getValue().get(0).getPerm().equals("12345"));
+
+        // Make sure we have no error
+        assert(!redirAttrs.getFlashAttributes().containsKey("alertDanger"));
     }
 
 
