@@ -31,6 +31,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.mvc.support.RedirectAttributesModelMap;
 import utils.OAuthUtils;
 
+import javax.validation.constraints.Null;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,6 +45,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @WebAppConfiguration
 @RunWith(SpringRunner.class)
+/**
+ * A fairly comprehensive set of Model/Controller unit tests for StudentsController
+ * (UI/HTML tests take place in src/test/java/edu/ucsb/cs48/s20/demo/ui/StudentsHtmlTest.class)
+ */
 public class StudentsControllerTest {
     @Autowired
     private MockMvc mvc;
@@ -106,7 +111,7 @@ public class StudentsControllerTest {
      * This test directly tests the information the /students endpoint injects into the Model
      * The method studentsController.students is called directly vs fully rendering html and using xpath
      *
-     * This tests the case where no students are enrolled
+     * - > This tests the case where no students are enrolled
      * @throws Exception
      */
     @Test
@@ -132,7 +137,7 @@ public class StudentsControllerTest {
      * This test directly tests the information the /students endpoint injects into the Model
      * The method studentsController.students is called directly vs fully rendering html and using xpath
      *
-     * This tests the case where some students are enrolled
+     * - > This tests the case where some students are enrolled
      * @throws Exception
      */
     @Test
@@ -157,8 +162,9 @@ public class StudentsControllerTest {
     /**
      * This tests the /students/delete/{id} endpoint by mocking two students, deleting one, and
      * asserting that the controller's model returns only one student in the students list
+     * (and that the controller adds a success message)
      *
-     * A very comprehensive test
+     * - > Case where a valid student ID is submitted and deleted
      */
     @Test
     public void testDeleteValidStudent() throws Exception {
@@ -190,8 +196,44 @@ public class StudentsControllerTest {
 
         // Assert model has correct attribute
         assert(model.getAttribute("students").equals(Arrays.asList(carl)));
+    }
 
-        // Note: with(authentication(mockAuthentication)) is required to bypass Spring's HttpSecurity that would otherwise redirect guest users to the login page
+    /**
+     * This tests the /students/delete/{id} endpoint by mocking two students, deleting an invalid id, and
+     * asserting that the controller's model returns returns both students and adds an error message
+     *
+     * - > Case where a INVALID student ID is submitted, and nothing should be deleted
+     */
+    @Test
+    public void testDeleteInvalidStudent() throws Exception {
+        // Begin by creating a new Model that we can pass to the controller to populate
+        Model model = new ExtendedModelMap();
+        RedirectAttributes redirAttrs = new RedirectAttributesModelMap();
+
+        // Mock the user role as an Admin
+        when(ms.role(any())).thenReturn("Admin");
+
+        // Create our two students
+        Student joe = new Student();
+        joe.setId(5);
+        Student carl = new Student();
+        carl.setId(10);
+
+        // Mock the database response
+        when(sr.findById((long)10)).thenReturn(java.util.Optional.empty());  // Mock no student for ID
+        when(sr.findAll()).thenReturn(Arrays.asList(joe, carl));
+
+        // Call the controller
+        studentsController.deleteAdmin((long) 5, model, redirAttrs, (OAuth2AuthenticationToken) mockAuthentication);
+
+        // Make sure delete NEVER gets called
+        verify(sr, times(0)).delete(any());
+
+        // Make sure we display a error message
+        assert(redirAttrs.getFlashAttributes().containsKey("alertDanger"));
+
+        // Assert model has correct attribute
+        assert(model.getAttribute("students").equals(Arrays.asList(joe, carl)));
     }
 
 
