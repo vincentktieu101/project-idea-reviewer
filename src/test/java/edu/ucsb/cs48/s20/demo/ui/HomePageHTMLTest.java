@@ -15,7 +15,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import edu.ucsb.cs48.s20.demo.advice.AuthControllerAdvice;
 import edu.ucsb.cs48.s20.demo.advice.StudentFlowAdvice;
+import edu.ucsb.cs48.s20.demo.entities.ProjectIdea;
+import edu.ucsb.cs48.s20.demo.entities.Student;
 import edu.ucsb.cs48.s20.demo.repositories.AppUserRepository;
+import edu.ucsb.cs48.s20.demo.repositories.ProjectIdeaRepository;
 import edu.ucsb.cs48.s20.demo.repositories.StudentRepository;
 import edu.ucsb.cs48.s20.demo.services.MembershipService;
 
@@ -36,7 +39,7 @@ import static org.springframework.security.test.web.servlet.request.SecurityMock
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(ApplicationController.class)
-public class HomePageTest {
+public class HomePageHTMLTest {
 
     @Autowired
 	private MockMvc mvc;
@@ -55,6 +58,9 @@ public class HomePageTest {
 
     @MockBean
     private AppUserRepository aur;
+
+    @MockBean
+    private ProjectIdeaRepository pir;
 
     @MockBean
     private StudentRepository sr;
@@ -83,15 +89,51 @@ public class HomePageTest {
                 .andExpect(xpath("//title").string("CS48 demo"));
     }
 
-    /*test that student can access home page when logged in
-    since this is a new student, they should have no submitted ideas and should see the text box*/
+    /*for some reason, these blocks aren't in a check that the user is a student- might wanna change*/
+    /*test that student with no submitted ideas and should see the text box*/
     @Test
     public void studentWithNoSubmissions_hasTextBox() throws Exception{
         when(sfa.needsToSubmitProjectIdea((OAuth2AuthenticationToken) mockAuthentication)).thenReturn(true);
-
+        // when(aca.isStudent((OAuth2AuthenticationToken) mockAuthentication))).return(true);
         mvc.perform(MockMvcRequestBuilders.get("/").with(authentication(mockAuthentication)).accept(MediaType.TEXT_HTML))
         .andExpect(status().isOk()).andExpect(xpath("/html/body/div/div[1]/p[1]").string("To get started, submit your project idea below."))
         .andExpect(xpath("//*[@id='details']").exists());
+
+    }
+
+    /*a student who has submitted will not see the text box*/
+    @Test
+    public void studentWithASubmission_hasNoTextBox() throws Exception{
+        when(sfa.needsToSubmitProjectIdea((OAuth2AuthenticationToken) mockAuthentication)).thenReturn(false);
+        // when(aca.isStudent((OAuth2AuthenticationToken) mockAuthentication))).return(true);
+        mvc.perform(MockMvcRequestBuilders.get("/").with(authentication(mockAuthentication)).accept(MediaType.TEXT_HTML))
+        .andExpect(xpath("//*[@id='details']").doesNotExist());
+    }
+
+    /*when a student has submitted an idea, it is displayed on the page*/
+    @Test
+    public void studentWithSubmission_displaysIdea() throws Exception{
+        when(aca.getIsStudent((OAuth2AuthenticationToken) mockAuthentication)).thenReturn(true);
+        when(sfa.needsToSubmitProjectIdea((OAuth2AuthenticationToken) mockAuthentication)).thenReturn(false);
+ 
+        String expectedTitle = "Idea0";
+        String expectedDeets = "THE DEETS";
+        
+        ProjectIdea pi = new ProjectIdea();
+        pi.setTitle(expectedTitle);
+        pi.setDetails(expectedDeets);
+
+        Student person = new Student();
+        person.setProjectIdea(pi);
+
+        when(sfa.getStudent((OAuth2AuthenticationToken) mockAuthentication)).thenReturn(person);
+        
+        mvc.perform(MockMvcRequestBuilders.get("/").with(authentication(mockAuthentication)).accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
+        .andExpect(xpath("/html/body/div/div/div/h2").string("Your Project Idea"))
+        .andExpect(xpath("/html/body/div/div/div/table/tbody/tr[1]/th").string("Title"))
+        .andExpect(xpath("/html/body/div/div/div/table/tbody/tr[1]/td").string(expectedTitle))
+        .andExpect(xpath("/html/body/div/div/div/table/tbody/tr[2]/th").string("Details"))
+        .andExpect(xpath("/html/body/div/div/div/table/tbody/tr[2]/td").string(expectedDeets));        
 
     }
 }
