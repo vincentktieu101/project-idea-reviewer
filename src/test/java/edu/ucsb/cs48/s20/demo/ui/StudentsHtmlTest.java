@@ -119,7 +119,7 @@ public class StudentsHtmlTest {
         // Check students endpoint. Since DB has not been mocked, there will be no students in the table
         mvc.perform(MockMvcRequestBuilders.get("/students").with(authentication(mockAuthentication)).accept(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
-                .andExpect(xpath("/html/body/div[@class='bootstrap-table bootstrap4']/div[@class='fixed-table-container']/div[@class='fixed-table-body']/table[@class='bootstrap-table table table-bordered table-hover']/tbody/tr[1]")
+                .andExpect(xpath("/html[@lang=\"en\"]/body/div[@class=\"container\"]/table[@class=\"bootstrap-table\"]/tbody//tr[1]")
                         .doesNotExist());
     }
 
@@ -134,16 +134,22 @@ public class StudentsHtmlTest {
         // Create two students to return from db
         Student s1 = mock(Student.class);
         when(s1.getFname()).thenReturn("Tom");
-        when(s1.numReviewsEntered()).thenReturn(5);
+        Student s2 = mock(Student.class);
+        when(s1.getFname()).thenReturn("Joe");
 
         // Mock database return
-        when(sr.findAll()).thenReturn(Arrays.asList(s1));
+        when(sr.findAll()).thenReturn(Arrays.asList(s1,s2));
 
         // Make the call and ensure table rows 1 and 2 exist (not 0 and 1, html is weird)
         mvc.perform(MockMvcRequestBuilders.get("/students").with(authentication(mockAuthentication)).accept(MediaType.TEXT_HTML))
                 .andExpect(status().isOk())
-                .andExpect(xpath("/html[@lang=\"en\"]/body/div[@class=\"container\"]/table[@class=\"bootstrap-table\"]/tbody/tr//td[1]")
-                        .exists());
+                .andExpect(xpath("/html[@lang=\"en\"]/body/div[@class=\"container\"]/table[@class=\"bootstrap-table\"]/tbody//tr[1]")
+                        .exists())
+                .andExpect(xpath("/html[@lang=\"en\"]/body/div[@class=\"container\"]/table[@class=\"bootstrap-table\"]/tbody//tr[2]")
+                        .exists())
+                .andExpect(xpath("/html[@lang=\"en\"]/body/div[@class=\"container\"]/table[@class=\"bootstrap-table\"]/tbody//tr[3]")
+                        .doesNotExist());
+
     }
 
 
