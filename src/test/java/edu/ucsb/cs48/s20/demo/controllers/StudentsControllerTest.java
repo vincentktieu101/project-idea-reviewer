@@ -216,6 +216,8 @@ public class StudentsControllerTest {
 
     /**
      * This tests the csv upload functionality at /students/upload
+     *
+     * - > Case where a valid CSV is uploaded by an admin
      */
     @Test
     public void testValidCSV() throws Exception {
@@ -249,6 +251,36 @@ public class StudentsControllerTest {
 
         // Make sure we have no error
         assert(!redirAttrs.getFlashAttributes().containsKey("alertDanger"));
+    }
+
+    /**
+     * This tests the csv upload functionality at /students/upload
+     *
+     * - > Case where an INVALID CSV is uploaded by an admimn
+     */
+    @Test
+    public void testInvalidCSV() throws Exception {
+        // Create redirAttrs that the controller can write to (a success/error message)
+        RedirectAttributes redirAttrs = new RedirectAttributesModelMap();
+
+        // Mock the user role as an Admin
+        when(ms.role(any())).thenReturn("Admin");
+
+        // Prepare the temp csv to upload
+        String csvContents =
+                "Random garbage that constitutes an invalid csv \n";
+        MockMultipartFile mockMultipartFile = new MockMultipartFile("students.csv","students.csv",
+                "text/plain", csvContents.getBytes());
+
+        // Call the controller
+        studentsController.uploadCSV(mockMultipartFile,(OAuth2AuthenticationToken) mockAuthentication, redirAttrs);
+
+        // Capture the argument X that the controller passed to sr.saveAll(X)
+        final ArgumentCaptor<List<Student>> captor = ArgumentCaptor.forClass(List.class);
+        verify(sr).saveAll(captor.capture());
+
+        // Make sure no students were imported
+        assert(captor.getValue().isEmpty());
     }
 
 
