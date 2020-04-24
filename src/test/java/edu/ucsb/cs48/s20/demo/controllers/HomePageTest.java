@@ -87,16 +87,7 @@ public class HomePageTest {
     since this is a new student, they should have no submitted ideas and should see the text box*/
     @Test
     public void studentWithNoSubmissions_hasTextBox() throws Exception{
-        when(aca.getFirstName(any())).thenReturn("Joe");
-        when(aca.getLastName(any())).thenReturn("Gaucho");
-        when(aca.getEmail(any())).thenReturn("joegaucho@ucsb.edu");
-        when(aca.getRole(any())).thenReturn("Student");
-        when(aca.getIsLoggedIn(any())).thenReturn(true);
-        when(sfa.needsToSubmitProjectIdea(any())).thenReturn(true);
-        when(sfa.getReviewsNeeded(any())).thenReturn(3);
-        // when(aca.getRole(any())).thenReturn("Student");
-        when(aca.getIsStudent(any())).thenReturn(true);
-        System.out.println("STUDENT? "+(aca.getIsStudent((OAuth2AuthenticationToken) mockAuthentication)));
+        when(sfa.needsToSubmitProjectIdea((OAuth2AuthenticationToken) mockAuthentication)).thenReturn(true);
 
         mvc.perform(MockMvcRequestBuilders.get("/").with(authentication(mockAuthentication)).accept(MediaType.TEXT_HTML))
         .andExpect(status().isOk()).andExpect(xpath("/html/body/div/div[1]/p[1]").string("To get started, submit your project idea below."))
