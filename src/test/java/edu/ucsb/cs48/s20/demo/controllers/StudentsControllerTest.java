@@ -89,7 +89,6 @@ public class StudentsControllerTest {
      * The method studentsController.students is called directly vs fully rendering html and using xpath
      *
      * - > This tests the case where no students are enrolled
-     * @throws Exception
      */
     @Test
     public void testEmptyStudentsModel() throws Exception {
@@ -115,7 +114,6 @@ public class StudentsControllerTest {
      * The method studentsController.students is called directly vs fully rendering html and using xpath
      *
      * - > This tests the case where some students are enrolled
-     * @throws Exception
      */
     @Test
     public void testNonEmptyStudentsModel() throws Exception {
