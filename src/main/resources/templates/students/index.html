@@ -11,7 +11,7 @@
 
   <h3>Students</h3>
   <table class="bootstrap-table" data-toggle="table" data-search="true" data-show-export="true" data-show-columns="true"
-  data-show-columns-toggle-all="true">
+         data-show-columns-toggle-all="true">
     <thead>
     <tr>
       <th data-sortable="true">id</th>
@@ -43,15 +43,15 @@
     </tbody>
   </table>
 
-<h3>Upload Students</h3>
+  <h3>Upload Students</h3>
 
-<br/>
-<form action="/students/upload" method="post" enctype="multipart/form-data">
-  <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}">
-  <input type="file" name="csv" id="csv" accept="text/csv">
-  <input type="submit" class="btn btn-secondary" value="Submit CSV">
-</form>
-<br>
+  <br/>
+  <form action="/students/upload" method="post" enctype="multipart/form-data">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}"></input>
+    <input type="file" name="csv" id="csv" accept="text/csv"></input>
+    <input type="submit" class="btn btn-secondary" value="Submit CSV"></input>
+  </form>
+  <br></br>
 
   <div th:replace="bootstrap/bootstrap_footer.html"></div>
 </div>

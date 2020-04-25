@@ -21,7 +21,7 @@ credential*.json
 .classpath
 .project
 .settings/
-
+.idea/
 
 # MacOS
 
