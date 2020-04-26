@@ -136,4 +136,24 @@ public class HomePageHTMLTest {
         .andExpect(xpath("/html/body/div/div/div/table/tbody/tr[2]/td").string(expectedDeets));        
 
     }
+
+     /*when a student has submitted an idea, there is a flash message indicating how many ideas they need to review*/
+    @Test
+    public void studentWithSubmission_hasReviewFlashMsg() throws Exception{
+        ProjectIdea pi = new ProjectIdea();
+        pi.setTitle("someTitle");
+        pi.setDetails("someDeets");
+
+        Student person = new Student();
+        person.setProjectIdea(pi);
+
+        when(aca.getIsStudent((OAuth2AuthenticationToken) mockAuthentication)).thenReturn(true);
+        when(sfa.needsToSubmitProjectIdea((OAuth2AuthenticationToken) mockAuthentication)).thenReturn(false);
+        when(sfa.getReviewsNeeded((OAuth2AuthenticationToken) mockAuthentication)).thenReturn(5);
+        when(sfa.getStudent((OAuth2AuthenticationToken) mockAuthentication)).thenReturn(person);
+        
+        mvc.perform(MockMvcRequestBuilders.get("/").with(authentication(mockAuthentication)).accept(MediaType.TEXT_HTML)).andExpect(status().isOk())
+        .andExpect(xpath("/html/body/div/div/div/div/div/span").string("You must review 5 more project ideas. "));
+    }
+
 }
