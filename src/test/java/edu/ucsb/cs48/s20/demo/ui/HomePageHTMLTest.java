@@ -1,4 +1,4 @@
-package edu.ucsb.cs48.s20.demo.controllers;
+package edu.ucsb.cs48.s20.demo.ui;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -36,9 +36,12 @@ import org.junit.Before;
 import static org.mockito.Mockito.when;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
+import org.springframework.test.context.web.WebAppConfiguration;
 
+@SpringBootTest
+@AutoConfigureMockMvc
+@WebAppConfiguration
 @RunWith(SpringRunner.class)
-@WebMvcTest(ApplicationController.class)
 public class HomePageHTMLTest {
 
     @Autowired
