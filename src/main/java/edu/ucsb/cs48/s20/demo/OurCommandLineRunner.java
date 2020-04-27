@@ -17,6 +17,9 @@ public class OurCommandLineRunner implements ApplicationRunner {
     @Autowired
     private AdminRepository adminRepository;
 
+    // Note: you can pass commandline arguments to spring boot with the following
+    // format:
+    // mvn spring-boot:run -Dspring-boot.run.arguments="--hello=world"
     @Override
     public void run(ApplicationArguments args) throws Exception {
         logger.info("Running application with the following args: {}", args.getOptionNames());
