@@ -25,7 +25,6 @@ import edu.ucsb.cs48.s20.demo.services.MembershipService;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.xpath;
 
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -34,7 +33,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.junit.Before;
 import static org.mockito.Mockito.when;
-import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 import org.springframework.test.context.web.WebAppConfiguration;
 
