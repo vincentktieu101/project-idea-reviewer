@@ -6,7 +6,9 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Set;
 import java.io.InputStreamReader;
 
 import org.slf4j.Logger;
@@ -24,8 +26,8 @@ import edu.ucsb.cs48.s20.demo.repositories.AdminRepository;
 import edu.ucsb.cs48.s20.demo.repositories.StudentRepository;
 
 @Component
-public class OurCommandLineRunner implements ApplicationRunner {
-    private static final Logger logger = LoggerFactory.getLogger(OurCommandLineRunner.class);
+public class CommandLineRunner implements ApplicationRunner {
+    private static final Logger logger = LoggerFactory.getLogger(CommandLineRunner.class);
 
     @Autowired
     private StudentRepository studentRepository;
@@ -38,42 +40,50 @@ public class OurCommandLineRunner implements ApplicationRunner {
 
     // Note: you can pass commandline arguments to spring boot with the following
     // format:
-    // mvn spring-boot:run -Dspring-boot.run.arguments="--load-students=filename"
-    // mvn spring-boot:run -Dspring-boot.run.arguments="--load-students=file1 --load-students=file2"
-    // mvn spring-boot:run -Dspring-boot.run.arguments="--add-admin=cgaucho@example.org"
+    // mvn spring-boot:run
+    // -Dspring-boot.run.arguments="--load-student-file=filename"
+    // mvn spring-boot:run -Dspring-boot.run.arguments="--load-student-file=file1
+    // --load-student-file=file2"
+    // mvn spring-boot:run
+    // -Dspring-boot.run.arguments="--add-admin=cgaucho@example.org"
+
+    private HashMap<String, OptionProcessor> options;
+
+    @FunctionalInterface
+    private interface OptionProcessor {
+        public void processOption(String value);
+    }
+
+    public CommandLineRunner() {
+        options = new HashMap<String, OptionProcessor>();
+        options.put("load-student-file", (s) -> loadStudentFile(s));
+        options.put("add-admin", (s) -> setAdmin(s));
+    }
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        if (args.getOptionNames().size() == 0) {
-            logger.info("No command line arguments to OurCommandLineRunner");
+        Set<String> optionNames = args.getOptionNames();
+
+        if (optionNames.size() == 0) {
+            logger.info("No command line arguments to CommandLineRunner");
             return;
         }
 
-        if (args.containsOption("load-student-file")) {
-            loadStudentFiles(args.getOptionValues("load-student-file"));
-        }
-
-        if (args.containsOption("add-admin")) {
-            setAdmins(args.getOptionValues("add-admin"));
-        }
-
-    }
-
-    public void loadStudentFiles(List<String> filenames) {
-        for (var filename : filenames) {
-            loadStudentFile(filename);
-        }
-    }
-
-    public void setAdmins(List<String> admins) {
-        for (var admin : admins) {
-            setAdmin(admin);
+        for (String option : optionNames) {
+            OptionProcessor optionProcessor = options.get(option);
+            if (optionProcessor == null) {
+                logger.error("{} is not a recognized command line option; value ignored", option);
+            } else {
+                List<String> optionValues = args.getOptionValues(option);
+                logger.info("processing: {} for values: {}", option, optionValues);
+                optionValues.forEach((item) -> optionProcessor.processOption(item));
+            }
         }
     }
 
     public void loadStudentFile(String filename) {
-        logger.warn("Loading data from {}", filename);
+        logger.info("Loading data from {}", filename);
 
         InputStream targetStream = null;
 
