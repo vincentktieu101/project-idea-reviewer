@@ -33,10 +33,10 @@ public class CommandLineRunner implements ApplicationRunner {
     private StudentRepository studentRepository;
 
     @Autowired
-    private AdminRepository adminRepository;
-
-    @Autowired
     CSVToObjectService<Student> csvToObjectService;
+    
+    @Autowired
+    private AdminRepository adminRepository;
 
     // Note: you can pass commandline arguments to spring boot with the following
     // format:
