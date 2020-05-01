@@ -20,7 +20,20 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+
 public class UserFlowEnd2EndTest {
+    static {
+        System.setProperty("spring.security.oauth2.client.provider.wiremock.authorization-uri", "http://localhost:8077/oauth/authorize");
+        System.setProperty("spring.security.oauth2.client.provider.wiremock.token-uri", "http://localhost:8077/oauth/token");
+        System.setProperty("spring.security.oauth2.client.provider.wiremock.user-info-uri", "http://localhost:8077/userinfo");
+        System.setProperty("spring.security.oauth2.client.provider.wiremock.user-name-attribute", "sub");
+        System.setProperty("spring.security.oauth2.client.registration.wiremock.provider", "wiremock");
+        System.setProperty("spring.security.oauth2.client.registration.wiremock.authorization-grant-type", "authorization_code");
+        System.setProperty("spring.security.oauth2.client.registration.wiremock.scope", "email");
+        System.setProperty("spring.security.oauth2.client.registration.wiremock.redirect-uri", "http://localhost:8080/login/oauth2/code/{registrationId}");
+        System.setProperty("spring.security.oauth2.client.registration.wiremock.clientId", "wm");
+        System.setProperty("spring.security.oauth2.client.registration.wiremock.clientSecret", "whatever");
+    }
 
     static final String APP_BASE_URL = "http://localhost:8080";
 
@@ -44,7 +57,7 @@ public class UserFlowEnd2EndTest {
                         .withBodyFile("login.html")));
 
         mockOAuth2Provider.stubFor(post(urlPathEqualTo("/login"))
-                .willReturn(temporaryRedirect("http://localhost:8080/login/oauth2/code/wiremock{{formData request.body 'form' urlDecode=true}}?code={{{randomValue length=30 type='ALPHANUMERIC'}}}&state={{{form.state}}}")));
+                .willReturn(temporaryRedirect("{{formData request.body 'form' urlDecode=true}}http://localhost:8080/login/oauth2/code/wiremock?code={{{randomValue length=30 type='ALPHANUMERIC'}}}&state={{{form.state}}}")));
 
         mockOAuth2Provider.stubFor(post(urlPathEqualTo("/oauth/token"))
                 .willReturn(okJson("{\"token_type\": \"Bearer\",\"access_token\":\"{{randomValue length=20 type='ALPHANUMERIC'}}\"}")));
@@ -62,20 +75,13 @@ public class UserFlowEnd2EndTest {
 
     @Test
     public void testTest() {
-        System.out.println("This is a good test right here!");
         webDriver.get(APP_BASE_URL + "/oauth2/authorization/wiremock");
-        System.out.println("                ========== CURRENT URL " + webDriver.getCurrentUrl());
         assert(webDriver.getCurrentUrl()).startsWith("http://localhost:8077/oauth/authorize");
 
         webDriver.findElement(By.name("username")).sendKeys("joe@ucsb.edu");
         webDriver.findElement(By.name("password")).sendKeys("password");
         webDriver.findElement(By.id("submit")).click();
-
-        String url = webDriver.getCurrentUrl();
-
-        assert(webDriver.getCurrentUrl().startsWith(""));
-
-        assert(true);
+        assert(webDriver.getCurrentUrl().equalsIgnoreCase("http://localhost:8080/"));
     }
 
 }
