@@ -13,12 +13,12 @@
 
       <!-- Conditional alert if user needs to submit more reviews or not !-->
       <div th:if="${reviewsNeededFromStudent} > 0">
-        <div class="alert alert-warning" role="alert">
+        <div class="alert alert-warning" role="alert" id="reviewsNeeded">
           <span th:text="'You must review ' + ${reviewsNeededFromStudent} + ' more project ideas'"></span>
         </div>
       </div>
       <div th:unless="${reviewsNeededFromStudent} > 0">
-        <div class="alert alert-success" role="alert">
+        <div class="alert alert-success" role="alert" id="reviewsSufficient">
           <span>You have reviewed a sufficient number of project ideas. Feel free to continue submitting additional reviews</span>
         </div>
       </div>
@@ -55,7 +55,7 @@
               </div>
               <div class="custom-control custom-radio custom-control-inline">
                 <input type="radio" id="option5" name="option5" class="custom-control-input" value="5" th:field="*{rating}">
-                <label class="custom-control-label" for="option5">5</label>
+                <label class="custom-control-label" for="option5" id="radio5Label">5</label>
               </div>
             </div>
 
@@ -73,7 +73,7 @@
           <button type="submit" class="btn btn-primary" hidden>Submit</button>
         </form>
 
-        <button class="btn btn-primary" onclick="validate()">Submit</button>
+        <button class="btn btn-primary" id="submit" onclick="validate()">Submit</button>
 
       </div>
 
