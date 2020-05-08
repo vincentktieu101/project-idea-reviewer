@@ -11,15 +11,8 @@ import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.jdbc.Sql;
-import org.springframework.test.context.jdbc.SqlMergeMode;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
-
-import javax.transaction.Transactional;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
@@ -33,8 +26,9 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
  * NOTE: To run this test you must install ChromeDriver on your machine
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-@Transactional
+// NOTE: properties="spring.datasource.name=XYZ" forces Spring Boot to run this test class with a fresh instance of the database.
+// XYZ can be anything - just make it unique from other test classes for a fresh test db (loaded from data.sql)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties="spring.datasource.name=userflowend2endtest")
 public class UserFlowEnd2EndTest {
 
     /**
@@ -109,7 +103,7 @@ public class UserFlowEnd2EndTest {
 
         // fill out idea form
         webDriver.findElement(By.id("ideaTitle")).sendKeys("This is a title for a fantastic idea");
-        webDriver.findElement(By.id("ideaBody")).sendKeys(MEDIUM_TEXT);
+        webDriver.findElement(By.id("details")).sendKeys(MEDIUM_TEXT);
         webDriver.findElement(By.id("submit")).click();
 
         // Make sure we got redirected to the review review page (lol)
