@@ -13,7 +13,7 @@
 
     <div class="form-group">
         <label>Details</label>
-        <textarea class="form-control" id="ideaBody" th:field="*{details}" rows="4" cols="50" th:minlength="${DETAILS_CHAR_MIN}" th:maxlength="${DETAILS_CHAR_MAX}">
+        <textarea class="form-control" th:field="*{details}" rows="4" cols="50" th:minlength="${DETAILS_CHAR_MIN}" th:maxlength="${DETAILS_CHAR_MAX}">
         </textarea>
 
         <div th:if="${detailHasErrors}" class="alert alert-danger" role="alert" th:text="${detailErrors}"></div>
