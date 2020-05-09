@@ -3,10 +3,8 @@ package edu.ucsb.cs48.s20.demo.end2end;
 import com.github.tomakehurst.wiremock.extension.responsetemplating.ResponseTemplateTransformer;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import com.github.tomakehurst.wiremock.junit.WireMockRule;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.junit.*;
 import org.junit.runner.RunWith;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
@@ -58,35 +56,40 @@ public class UserFlowEnd2EndTest {
     public WireMockRule mockOAuth2Provider = new WireMockRule(wireMockConfig()
             .port(8077)
             .extensions(new ResponseTemplateTransformer(true)));
+
+    /**
+     * Runs before the class.
+     * Instantiates the WebDriverManager so we can correctly locate the system's ChromeDriver below
+     */
+    @BeforeClass
+    public static void setupClass() {
+        WebDriverManager.chromedriver().setup();
+    }
+
     @Before
     public void setUp() {
-        // Configure chrome driver
-        // NOTE: You may need to install ChromeDriver on your local machine to make tests pass
-        // On mac: `brew install chromedriver`
+        // Setup ChromeDriver (aided by the WebDriverManager)
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
         webDriver = new ChromeDriver(options);
 
+        // Configure mock oauth endpoints
         mockOAuth2Provider.stubFor(get(urlPathEqualTo("/favicon.ico")).willReturn(notFound()));
-
         mockOAuth2Provider.stubFor(get(urlPathMatching("/oauth/authorize?.*"))
                 .willReturn(aResponse()
                         .withStatus(200)
                         .withHeader("Content-Type", "text/html")
                         .withBodyFile("mocklogin.html")));
-
         mockOAuth2Provider.stubFor(post(urlPathEqualTo("/login"))
                 .willReturn(temporaryRedirect("{{formData request.body 'form' urlDecode=true}}http://localhost:8080/login/oauth2/code/wiremock?code={{{randomValue length=30 type='ALPHANUMERIC'}}}&state={{{form.state}}}")));
-
         mockOAuth2Provider.stubFor(post(urlPathEqualTo("/oauth/token"))
                 .willReturn(okJson("{\"token_type\": \"Bearer\",\"access_token\":\"{{randomValue length=20 type='ALPHANUMERIC'}}\"}")));
-
         mockOAuth2Provider.stubFor(get(urlPathEqualTo("/userinfo"))
                 .willReturn(okJson("{\"sub\":\"my-id\",\"email\":\"joe@ucsb.edu\", \"hd\":\"ucsb.edu\", \"name\":\"Joe\", \"given_name\":\"Joe\", \"family_name\":\"Gaucho\"}")));
     }
 
     /**
-     * Tear down the webDriver (automated clicker)
+     * Tear down the webDriver (the automated clicker)
      */
     @After
     public void reset() {
