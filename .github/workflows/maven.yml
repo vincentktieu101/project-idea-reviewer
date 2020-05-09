@@ -14,6 +14,6 @@ jobs:
       with:
         java-version: 11.0.x
     - name: Install ChromeDriver
-      run: sudo apt-get install chromium-chromedriver -y
+      run: sudo apt-get update && sudo apt-get install chromium-chromedriver -y
     - name: Build with Maven
       run: mvn -B test
