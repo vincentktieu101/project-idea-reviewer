@@ -3,7 +3,7 @@
 
     <div class="form-group">
         <label>Title</label>
-        <input type="text" class="form-control" th:field="*{title}" th:minlength="${TITLE_CHAR_MIN}" th:maxlength="${TITLE_CHAR_MAX}" />
+        <input type="text" class="form-control" id="ideaTitle" th:field="*{title}" th:minlength="${TITLE_CHAR_MIN}" th:maxlength="${TITLE_CHAR_MAX}" />
         <div th:if="${titleHasErrors}" class="alert alert-danger" role="alert" th:text="${titleErrors}"></div>
         <p>Please give your project a short title. Minimum chars: <span th:text=${TITLE_CHAR_MIN}></span>, maximum chars: <span th:text=${TITLE_CHAR_MAX}></span>.  The best title is one that strikes the right balance
             between conveying lots of information, while being as short as possible.  Take a moment
@@ -27,5 +27,5 @@
         </p>
     </div>
     <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
-    <button type="submit" class="btn btn-primary">Submit</button>
+    <button type="submit" id="submit" class="btn btn-primary">Submit</button>
 </form>
