@@ -21,8 +21,6 @@ import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMoc
  *
  * If you are trying to duplicate this test in a project, make sure to copy the
  * html template under the test/resources/__files/ directory!
- *
- * NOTE: To run this test you must install ChromeDriver on your machine
  */
 @RunWith(SpringRunner.class)
 // NOTE: properties="spring.datasource.name=XYZ" forces Spring Boot to run this test class with a fresh instance of the database.
