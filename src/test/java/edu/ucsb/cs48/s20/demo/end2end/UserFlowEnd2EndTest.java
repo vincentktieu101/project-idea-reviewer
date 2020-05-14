@@ -11,18 +11,21 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 
 /**
- * This test runs a complete end-to-end test on the project as a single test.
+ * This test runs a complete end-to-end test on the project as a single test WITH MOCK AUTHENTICATION.
  * Starts by logging in as a student, submitting a review, and reviewing 5 ideas
  *
  * If you are trying to duplicate this test in a project, make sure to copy the
  * html template under the test/resources/__files/ directory!
  */
 @RunWith(SpringRunner.class)
+@DirtiesContext // prevent spring from caching the context for further tests
+
 // NOTE: properties="spring.datasource.name=XYZ" forces Spring Boot to run this test class with a fresh instance of the database.
 // XYZ can be anything - just make it unique from other test classes for a fresh test db (loaded from data.sql)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT, properties="spring.datasource.name=userflowend2endtest")
@@ -66,7 +69,7 @@ public class UserFlowEnd2EndTest {
 
     @Before
     public void setUp() {
-        // Setup ChromeDriver (aided by the WebDriverManager)
+        // Setup ChromeDriver (aided by the WebDriverManager pom dependency)
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
         webDriver = new ChromeDriver(options);
@@ -99,7 +102,7 @@ public class UserFlowEnd2EndTest {
     static String MEDIUM_TEXT = "This is a long bit of text. This will be reused in some text fields throughout the test.";
 
     @Test
-    public void testTest() {
+    public void testUserFlow() {
         // Navigate to login page
         webDriver.get("http://localhost:8080/oauth2/authorization/wiremock");
         // Make sure Spring redirected us to the right place
