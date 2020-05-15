@@ -28,6 +28,19 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class UnauthenticatedUserEnd2EndTest {
     private WebDriver webDriver;
 
+    static {
+        System.setProperty("spring.security.oauth2.client.provider.wiremock.authorization-uri", "http://localhost:8077/oauth/authorize");
+        System.setProperty("spring.security.oauth2.client.provider.wiremock.token-uri", "http://localhost:8077/oauth/token");
+        System.setProperty("spring.security.oauth2.client.provider.wiremock.user-info-uri", "http://localhost:8077/userinfo");
+        System.setProperty("spring.security.oauth2.client.provider.wiremock.user-name-attribute", "sub");
+        System.setProperty("spring.security.oauth2.client.registration.wiremock.provider", "wiremock");
+        System.setProperty("spring.security.oauth2.client.registration.wiremock.authorization-grant-type", "authorization_code");
+        System.setProperty("spring.security.oauth2.client.registration.wiremock.scope", "email");
+        System.setProperty("spring.security.oauth2.client.registration.wiremock.redirect-uri", "http://localhost:8080/login/oauth2/code/{registrationId}");
+        System.setProperty("spring.security.oauth2.client.registration.wiremock.clientId", "wm");
+        System.setProperty("spring.security.oauth2.client.registration.wiremock.clientSecret", "whatever");
+    }
+
     /**
      * Runs before the class.
      * Instantiates the WebDriverManager so we can correctly locate the system's ChromeDriver below
