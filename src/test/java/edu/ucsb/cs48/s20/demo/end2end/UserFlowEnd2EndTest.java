@@ -99,7 +99,7 @@ public class UserFlowEnd2EndTest {
     static String MEDIUM_TEXT = "This is a long bit of text. This will be reused in some text fields throughout the test.";
 
     @Test
-    public void testTest() {
+    public void runUserFlowEnd2EndTestWithAuthentication() {
         // Navigate to login page
         webDriver.get("http://localhost:8080/oauth2/authorization/wiremock");
         // Make sure Spring redirected us to the right place
