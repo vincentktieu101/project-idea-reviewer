@@ -38,7 +38,7 @@
 	<!-- (20) <distributionManagement/> -->
 
 	<!-- copies website into /docs subdirectory to publish on
-		GitHub pages -->
+                                     GitHub pages -->
 
 	<distributionManagement>
 		<site>
@@ -168,11 +168,12 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<mainClass>${mainClass}</mainClass>
+					<mainClass>$ {mainClass}</mainClass>
 				</configuration>
 			</plugin>
 
-			<!-- For mvn:package, the jar file is now executable -->
+			<!-- For mvn:
+                                     package, the jar file is now executable -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
@@ -181,7 +182,9 @@
 					<archive>
 						<manifest>
 							<!-- full package name of class with the main you want to run -->
-							<mainClass>${mainClass}</mainClass>
+							<mainClass>$ {
+    mainClass
+}</mainClass>
 						</manifest>
 					</archive>
 				</configuration>
@@ -199,24 +202,24 @@
 
 			<!-- Test case coverage report -->
 			<!-- <plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>0.8.2</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>report</id>
-						<phase>prepare-package</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin> -->
+    <groupId>org.jacoco</groupId>
+    <artifactId>jacoco-maven-plugin</artifactId>
+    <version>0.8.2</version>
+    <executions>
+    <execution>
+    <goals>
+    <goal>prepare-agent</goal>
+    </goals>
+    </execution>
+    <execution>
+    <id>report</id>
+    <phase>prepare-package</phase>
+    <goals>
+    <goal>report</goal>
+    </goals>
+    </execution>
+    </executions>
+    </plugin> -->
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -295,7 +298,7 @@
 									<goal>copy-resources</goal>
 								</goals>
 								<configuration>
-									<outputDirectory>${basedir}/target/classes</outputDirectory>
+									<outputDirectory>$ {basedir}/target/classes</outputDirectory>
 									<resources>
 										<resource>
 											<directory>.</directory>
@@ -338,7 +341,7 @@
 				</dependency>
 			</dependencies>
 			<properties>
-				<environment-properties>${env.PRODUCTION_PROPERTIES}</environment-properties>
+				<environment-properties>$ {env.PRODUCTION_PROPERTIES}</environment-properties>
 			</properties>
 		</profile>
 	</profiles>
