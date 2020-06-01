@@ -55,18 +55,10 @@ public class UserFlowEnd2EndTest {
             .port(8077)
             .extensions(new ResponseTemplateTransformer(true)));
 
-    /**
-     * Runs before the class.
-     * Instantiates the WebDriverManager so we can correctly locate the system's ChromeDriver below
-     */
-    @BeforeClass
-    public static void setupClass() {
-        WebDriverManager.chromedriver().setup();
-    }
-
     @Before
     public void setUp() {
         // Setup ChromeDriver (aided by the WebDriverManager)
+        WebDriverManager.chromedriver().setup();
         ChromeOptions options = new ChromeOptions();
         options.addArguments("--headless");
         webDriver = new ChromeDriver(options);
