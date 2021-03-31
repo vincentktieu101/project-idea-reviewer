@@ -32,7 +32,7 @@
         <form  id="reviewForm" name="reviewForm" action="#" th:action="@{'/reviews/add/' + ${randomIdeaThatNeedsAReview.id}}" th:object="${review}" method="post">
 
           <div class="form-group">
-            <label>Rating (enter an integer 1-5, 5 being an incredible idea)</label>
+            <label>Rating (select one out of 1-5, with 5 being the best)</label>
             <!--
             <input type="text" id="rating-field" class="form-control" th:field="*{rating}" />
             -->
@@ -63,7 +63,7 @@
           </div>
 
           <div class="form-group">
-            <label>Details</label>
+            <label>Details (please briefly explain your rating)</label>
             <textarea  class="form-control" th:field="*{details}" id="details" rows="4" cols="50" maxlength="255">
         </textarea>
 
